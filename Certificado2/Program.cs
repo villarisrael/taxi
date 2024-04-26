@@ -5,6 +5,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddTransient<IRepositorioCertificadores, RepositorioCertificadores>();
+builder.Services.AddTransient<IRepositorioMonedas, RepositorioMonedas>();
 
 
 var app = builder.Build();
