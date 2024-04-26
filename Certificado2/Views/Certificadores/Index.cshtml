@@ -1,0 +1,110 @@
+﻿@model IEnumerable<Certificado2.Modelos.Certificadores>
+
+@{
+    Layout = "Certificadores";
+}
+<div style="margin-left:10px;margin-right:10px">
+    <h2>Listado de Certificadores</h2>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Razon Social
+                </th>
+                <th>
+                    Nombre Responsable
+                </th>
+                <th>
+                    Email
+                </th>
+
+                <th>
+                    Teléfono
+                </th>
+
+
+                <th>
+                    Logo
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var certificador in Model)
+            {
+                <tr>
+                    <td>
+                        @certificador.RazonSocial
+                    </td>
+                    <td>
+                        @certificador.NombreResponsable
+                    </td>
+                    <td>
+                        @certificador.Email
+                    </td>
+
+                    <td>
+                        @certificador.Telefono
+                    </td>
+
+                    <td>
+                        @{
+                            try
+                            {
+                                string imagen = Convert.ToBase64String(certificador.Logo);
+
+                                <img src="data:image/jpeg;base64,@imagen" alt="Logo" width="100" />
+                            }
+                            catch(Exception ewr)
+                            {
+                                <img src="data:image/jpeg;base64,null" alt="Logo" width="100" />
+                            }
+                            }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@* Paginación *@
+@if (ViewBag.TotalPages > 1)
+{
+    <nav id="pagination" aria-label="Page navigation example">
+        @if (ViewBag.TotalPages > 1)
+        {
+            <ul class="pagination justify-content-center">
+                @if (ViewBag.CurrentPage > 1)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="#" data-page="@((int)ViewBag.CurrentPage - 1)">Anterior</a>
+                    </li>
+                }
+                @for (int i = 1; i <= ViewBag.TotalPages; i++)
+                {
+                    <li class="page-item @(ViewBag.CurrentPage == i ? "active" : "")">
+                        <a class="page-link" href="#" data-page="@i">@i</a>
+                    </li>
+                }
+                @if (ViewBag.CurrentPage < ViewBag.TotalPages)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="#" data-page="@((int)ViewBag.CurrentPage + 1)">Siguiente</a>
+                    </li>
+                }
+            </ul>
+        }
+    </nav>
+}
+
+<script>
+    // Manejar clics en los enlaces de paginación
+    document.getElementById("pagination").addEventListener("click", function (e) {
+        if (e.target.tagName === "A") {
+            e.preventDefault();
+            var page = parseInt(e.target.getAttribute("data-page"));
+            window.location.href = "@Url.Action("Index")" + "?page=" + page;
+        }
+    });
+</script>
+
