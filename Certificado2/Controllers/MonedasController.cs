@@ -34,8 +34,12 @@ namespace Certificado2.Controllers
             return View();
         }
 
-        public async Task<IActionResult> GenerarPdf(string Serie, string Folio)
+        public async Task<IActionResult> GenerarPdf(string Serie, int Folio)
         {
+
+            var datosMoneda = await _repositorioMonedas.ObtenerDatosMoneda(Serie, Folio);
+
+
             //Variable string igualado con DateTime para obtener la fecha
             string date1 = DateTime.UtcNow.ToString("dd-MM-yyyy");
 
@@ -44,24 +48,24 @@ namespace Certificado2.Controllers
 
             // Ruta relativa de la imagen dentro de wwwroot
             string imagePath = System.IO.Path.Combine(_webHostEnvironment.WebRootPath, "imagenes", imageName);
-            
+
             MemoryStream ms = new MemoryStream();
 
 
 
-            
+
 
             PdfWriter pw = new PdfWriter(ms);
             PdfDocument pdfDocument = new PdfDocument(pw);
             Document doc = new Document(pdfDocument, PageSize.LETTER);
 
-            
+
             Image formatImage = new Image(ImageDataFactory.Create(imagePath));
 
-            
+
             formatImage.SetAutoScale(true);
 
-            
+
             doc.Add(formatImage);
 
 
@@ -75,14 +79,26 @@ namespace Certificado2.Controllers
 
             doc.Add(paragraph);
 
+            // Suponiendo que DatosMoneda tiene una propiedad llamada PropiedadEjemplo
+            foreach (var datoMoneda in datosMoneda)
+            {
+                var serieMoneda = datoMoneda.Serie;
+                var folioMoneda = datoMoneda.Folio;
 
-            Paragraph paragraphSerie = new Paragraph($"{Serie} {Folio}")
+                Paragraph paragraphSerie = new Paragraph($"{serieMoneda} {folioMoneda}")
             .SetFixedPosition(460, 700, 400) // Establece la posición del texto sobre la imagen
             .SetTextAlignment(TextAlignment.LEFT) // Alinea el texto
             .SetFontSize(12) // Establece el tamaño de fuente
             .SetFontColor(iText.Kernel.Colors.ColorConstants.BLACK); // Establece el color de fuente
 
-            doc.Add(paragraphSerie);
+                doc.Add(paragraphSerie);
+
+            }
+
+
+
+
+
 
             doc.Close();
 
