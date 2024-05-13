@@ -1,0 +1,73 @@
+﻿<div style="margin-left:10px;margin-right:10px">
+    @* <link rel="stylesheet" href="~/css/estilo.css">*@
+    @model Certificado2.Modelos.Certificadores
+
+    @{
+        ViewData["Title"] = "Modificar";
+        Layout = "Certificadores";
+    }
+
+    <h1>Modificar Cerificado</h1>
+
+    <h4></h4>
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <form method="post" asp-action="Modificar" enctype="multipart/form-data">
+                @*  <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                *@
+                <input type="hidden" asp-for="Id" />
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label asp-for="RazonSocial" class="control-label">Razón social</label>
+                    <input asp-for="RazonSocial" value="@Model.RazonSocial" class="form-control" placeholder="Ingresar razón social" name="RazonSocial" />
+                    <span asp-validation-for="RazonSocial" class="text-danger"></span>
+                </div>
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label asp-for="NombreResponsable" class="control-label">Responsable</label>
+                    <input asp-for="NombreResponsable" value="@Model.NombreResponsable" class="form-control" placeholder="Ingresar nombre del responsable" name="NombreResponsable" />
+                    <span asp-validation-for="NombreResponsable" class="text-danger"></span>
+                </div>
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label asp-for="Email" class="control-label">E-mail</label>
+                    <input asp-for="Email" class="form-control" value="@Model.Email" placeholder="Ingresar e-mail" name="Email" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label asp-for="CP" class="control-label">CP</label>
+                    <input asp-for="CP" maxlength="5" value="@Model.CP" class="form-control" placeholder="Ingresar CP" name="CP" />
+                    <span asp-validation-for="CP" class="text-danger"></span>
+                </div>
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label asp-for="Telefono" class="control-label">Telefono</label>
+                    <input asp-for="Telefono" value="@Model.Telefono" maxlength="10" class="form-control" placeholder="Ingresar Telefono" name="Telefono" />
+                    <span asp-validation-for="Telefono" class="text-danger"></span>
+                </div>
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label asp-for="EmailFacturacion" class="control-label">E-mail Facturación</label>
+                    <input asp-for="EmailFacturacion" value="@Model.EmailFacturacion" class="form-control" placeholder="Ingresar e-mail" name="EmailFacturacion" />
+                    <span asp-validation-for="EmailFacturacion" class="text-danger"></span>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label asp-for="RFC" class="control-label">RFC</label>
+                    <input asp-for="RFC" value="@Model.RFC" maxlength="13" class="form-control" placeholder="Ingresar RFC" name="RFC" />
+                    <span asp-validation-for="RFC" class="text-danger"></span>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label asp-for="Logo1" class="control-label">Logo</label>
+                    <input asp-for="Logo1" value="@Model.Logo" type="file" class="form-control" name="Logo1" />
+                    <span asp-validation-for="Logo1" class="text-danger"></span>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <input type="submit" value="Guardar" class="btn btn-primary" /> |
+                    <a asp-action="Index" class="btn btn-outline-secondary">Regresar a la lista</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+</div>
+

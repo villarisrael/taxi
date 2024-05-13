@@ -14,6 +14,9 @@ namespace Certificado2.Servicios
         Task CrearAsync(Certificadores objFuentesAbastecimiento);
         Task<IEnumerable<Certificadores>> ObtenerListado();
         Task ModificarAsync(Certificadores objFuentesAbastecimiento);
+        Task ModificarCLogoAsync(Certificadores objFuentesAbastecimiento);
+        Task SuspenderCertificado(int id);
+
         Task<Certificadores> ObtenerDetalleAsync(int idCertificadores);
         Task EliminarAsync(int id);
 
@@ -57,7 +60,8 @@ namespace Certificado2.Servicios
                                     Telefono = reader["Telefono"] as string,
                                     EmailFacturacion = reader["Emailfacturacion"] as string,
                                     RFC = reader["RFC"] as string,
-                                    Logo = reader["logo"] as byte[]
+                                    Logo = reader["logo"] as byte[],
+                                    Suspendido = (bool)reader["Suspendido"] 
                                 };
 
                                 listado.Add(certificador);
@@ -82,8 +86,8 @@ namespace Certificado2.Servicios
                 {
                     await connection.OpenAsync();
 
-                    string insertQuery = "INSERT INTO certificadores (`RazonSocial`, `NombreResponsable`, `Email`, `CP`, `Telefono`, `Emailfacturacion`, `RFC`, `logo`) VALUES " +
-                                         "(@RazonSocial, @NombreResponsable, @Email, @CP, @Telefono, @Emailfacturacion, @RFC, @Logo)";
+                    string insertQuery = "INSERT INTO certificadores (`RazonSocial`, `NombreResponsable`, `Email`, `CP`, `Telefono`, `Emailfacturacion`, `RFC`, Suspendido,`logo`) VALUES " +
+                                         "(@RazonSocial, @NombreResponsable, @Email, @CP, @Telefono, @Emailfacturacion, @RFC,@Suspendido, @Logo)";
 
                     using (var insertCommand = new MySqlCommand(insertQuery, connection))
                     {
@@ -94,6 +98,7 @@ namespace Certificado2.Servicios
                         insertCommand.Parameters.AddWithValue("@Telefono", objCertificadores.Telefono);
                         insertCommand.Parameters.AddWithValue("@Emailfacturacion", objCertificadores.EmailFacturacion);
                         insertCommand.Parameters.AddWithValue("@RFC", objCertificadores.RFC);
+                        insertCommand.Parameters.AddWithValue("@Suspendido", objCertificadores.Suspendido);
                         insertCommand.Parameters.AddWithValue("@Logo", objCertificadores.Logo);
 
                         await insertCommand.ExecuteNonQueryAsync();
@@ -107,7 +112,7 @@ namespace Certificado2.Servicios
         }
 
 
-        public async Task ModificarAsync(Certificadores objCertificadores)
+        public async Task ModificarCLogoAsync(Certificadores objCertificadores)
         {
             try
             {
@@ -115,7 +120,7 @@ namespace Certificado2.Servicios
                 {
                     await connection.OpenAsync();
 
-                    string updateQuery = "UPDATE certificadores SET `RazonSocial` = @RazonSocial, `NombreResponsable` = @NombreResponsable, `Email` = @Email, `CP` = @CP, `Telefono` = @Telefono, `Emailfacturacion` = @Emailfacturacion, `RFC` = @RFC, `logo` = @Logo WHERE `id` = @Id";
+                    string updateQuery = "UPDATE certificadores SET `RazonSocial` = @RazonSocial, `NombreResponsable` = @NombreResponsable, `Email` = @Email, `CP` = @CP, `Telefono` = @Telefono, `Emailfacturacion` = @Emailfacturacion, `RFC` = @RFC,Suspendido=@Suspendido WHERE `id` = @Id";
 
                     using (var updateCommand = new MySqlCommand(updateQuery, connection))
                     {
@@ -126,7 +131,8 @@ namespace Certificado2.Servicios
                         updateCommand.Parameters.AddWithValue("@Telefono", objCertificadores.Telefono);
                         updateCommand.Parameters.AddWithValue("@Emailfacturacion", objCertificadores.EmailFacturacion);
                         updateCommand.Parameters.AddWithValue("@RFC", objCertificadores.RFC);
-                        updateCommand.Parameters.AddWithValue("@Logo", objCertificadores.Logo);
+                        updateCommand.Parameters.AddWithValue("@suspendido", objCertificadores.Suspendido);
+                        //updateCommand.Parameters.AddWithValue("@Logo", objCertificadores.Logo);
                         updateCommand.Parameters.AddWithValue("@Id", objCertificadores.Id);
 
                         await updateCommand.ExecuteNonQueryAsync();
@@ -141,6 +147,65 @@ namespace Certificado2.Servicios
 
 
 
+        public async Task ModificarAsync(Certificadores objCertificadores)
+        {
+            try
+            {
+                using (MySqlConnection connection = new MySqlConnection(connectionString))
+                {
+                    await connection.OpenAsync();
+
+                    string updateQuery = "UPDATE certificadores SET `RazonSocial` = @RazonSocial, `NombreResponsable` = @NombreResponsable, `Email` = @Email, `CP` = @CP, `Telefono` = @Telefono, `Emailfacturacion` = @Emailfacturacion, `RFC` = @RFC,Suspendido=@Suspendido, `logo` = @Logo WHERE `id` = @Id";
+
+                    using (var updateCommand = new MySqlCommand(updateQuery, connection))
+                    {
+                        updateCommand.Parameters.AddWithValue("@RazonSocial", objCertificadores.RazonSocial);
+                        updateCommand.Parameters.AddWithValue("@NombreResponsable", objCertificadores.NombreResponsable);
+                        updateCommand.Parameters.AddWithValue("@Email", objCertificadores.Email);
+                        updateCommand.Parameters.AddWithValue("@CP", objCertificadores.CP);
+                        updateCommand.Parameters.AddWithValue("@Telefono", objCertificadores.Telefono);
+                        updateCommand.Parameters.AddWithValue("@Emailfacturacion", objCertificadores.EmailFacturacion);
+                        updateCommand.Parameters.AddWithValue("@RFC", objCertificadores.RFC);
+                        updateCommand.Parameters.AddWithValue("@suspendido", objCertificadores.Suspendido);
+                        updateCommand.Parameters.AddWithValue("@Logo", objCertificadores.Logo);
+                        updateCommand.Parameters.AddWithValue("@Id", objCertificadores.Id);
+
+                        await updateCommand.ExecuteNonQueryAsync();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al actualizar certificador: {ex.Message}");
+            }
+        }
+        
+        public async Task SuspenderCertificado(int id)
+        {
+            try
+            {
+                using (MySqlConnection connection = new MySqlConnection(connectionString))
+                {
+                    await connection.OpenAsync();
+
+                    string updateQuery = "UPDATE certificadores SET `Suspendido` = @Suspendido WHERE `id` = @Id";
+
+                    using (var updateCommand = new MySqlCommand(updateQuery, connection))
+                    {
+                        
+                        updateCommand.Parameters.AddWithValue("@Suspendido", true);
+                       
+                        updateCommand.Parameters.AddWithValue("@Id", id);
+
+                        await updateCommand.ExecuteNonQueryAsync();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al suspender certificador: {ex.Message}");
+            }
+        }
 
 
         public async Task EliminarAsync(int id)
@@ -199,6 +264,7 @@ namespace Certificado2.Servicios
                                     Telefono = reader["Telefono"] as string,
                                     EmailFacturacion = reader["EmailFacturacion"] as string,
                                     RFC = reader["RFC"] as string,
+                                    Suspendido = (bool)reader["Suspendido"],
                                     Logo = reader["Logo"] as byte[]
                                 };
                             }

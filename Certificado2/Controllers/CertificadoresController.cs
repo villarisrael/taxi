@@ -10,6 +10,7 @@ using iText.Layout.Properties;
 using iText.Layout.Element;
 using Microsoft.AspNetCore.Mvc;
 using Document = iText.Layout.Document;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Certificado2.Controllers
 {
@@ -23,7 +24,7 @@ namespace Certificado2.Controllers
             _repositorioCertificadores = repositorioCertificadores;
         }
 
-        [HttpGet]
+        //[HttpGet]
         public async Task<IActionResult> Index(string sortOrder, string currentFilter, string searchString, int page = 1, int pageSize = 20)
         {
             var listadoFuentesAbastecimiento = await _repositorioCertificadores.ObtenerListado();
@@ -37,16 +38,16 @@ namespace Certificado2.Controllers
             return View(elementosPag);
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Certificadores>> ObtenerDetalle(int id)
+        //[HttpGet("{id}")]
+
+        public async Task<ActionResult> ObtenerDetalle(int id)
         {
             try
             {
                 var certificador = await _repositorioCertificadores.ObtenerDetalleAsync(id);
-                if (certificador == null)
-                    return NotFound($"No se encontró el certificador con ID {id}");
+                return View(certificador);
 
-                return Ok(certificador);
+                
             }
             catch (Exception ex)
             {
@@ -54,35 +55,122 @@ namespace Certificado2.Controllers
             }
         }
 
-        [HttpPost]
-        public async Task<ActionResult> Crear([FromBody] Certificadores certificador)
+        public IActionResult Crear()
         {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Crear(Certificadores certificador)
+        {
+            string imagenBase64 = "";
+            certificador.Suspendido = false;
             try
             {
+                try
+                {
+                    if (certificador.Logo1 != null && certificador.Logo1.Length > 0)
+                    {
+                        // Aquí puedes manipular los bytes de la imagen
+                        // Por ejemplo, guardarlos en una base de datos, procesarlos, etc.
+
+                        // Guardar los bytes de la imagen en una variable temporal
+                        using (var memoryStream = new MemoryStream())
+                        {
+                            certificador.Logo1.CopyTo(memoryStream);
+                            byte[] bytesImagen = memoryStream.ToArray();
+                            // Ahora tienes los bytes de la imagen en 'bytesImagen'
+                            certificador.Logo = bytesImagen;
+                            // Puedes guardarlos en una base de datos, procesarlos, etc.
+                        }
+
+                    }
+                }
+                catch (Exception e)
+                {
+
+                }
                 await _repositorioCertificadores.CrearAsync(certificador);
-                return Ok("Certificador creado exitosamente.");
+                // Redirige a la acción Index
+                return RedirectToAction("Index");
+
             }
             catch (Exception ex)
             {
                 return StatusCode(500, $"Error al crear el certificador: {ex.Message}");
             }
         }
+        public async Task<ActionResult> Modificar(int id)
+        {
+            var certificador =  await _repositorioCertificadores.ObtenerDetalleAsync(id);
+            return View(certificador);
+        }
 
-        [HttpPut("{id}")]
-        public async Task<ActionResult> Modificar(int id, [FromBody] Certificadores certificador)
+
+        [HttpPost]
+        public async Task<ActionResult> Modificar(Certificadores certificador)
         {
             try
             {
-                if (id != certificador.Id)
-                    return BadRequest("El ID del certificador no coincide con el ID proporcionado en la solicitud.");
+                if (certificador.Logo1 != null)
+                {
+                    try
+                    {
+                        if (certificador.Logo1 != null && certificador.Logo1.Length > 0)
+                        {
+                            // Aquí puedes manipular los bytes de la imagen
+                            // Por ejemplo, guardarlos en una base de datos, procesarlos, etc.
 
-                await _repositorioCertificadores.ModificarAsync(certificador);
-                return Ok($"Certificador con ID {id} modificado exitosamente.");
+                            // Guardar los bytes de la imagen en una variable temporal
+                            using (var memoryStream = new MemoryStream())
+                            {
+                                certificador.Logo1.CopyTo(memoryStream);
+                                byte[] bytesImagen = memoryStream.ToArray();
+                                // Ahora tienes los bytes de la imagen en 'bytesImagen'
+                                certificador.Logo = bytesImagen;
+                                // Puedes guardarlos en una base de datos, procesarlos, etc.
+                            }
+
+                        }
+                    }
+                    catch (Exception e)
+                    {
+
+                    }
+                    await _repositorioCertificadores.ModificarAsync(certificador);
+                }
+                else
+                {
+                    await _repositorioCertificadores.ModificarCLogoAsync(certificador);
+                }
+
+                
+              
             }
             catch (Exception ex)
             {
                 return StatusCode(500, $"Error al modificar el certificador: {ex.Message}");
             }
+            return RedirectToAction("ObtenerDetalle", new {id= certificador.Id});
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> Suspender(int id)
+        {
+            try
+            {
+               
+                    await _repositorioCertificadores.SuspenderCertificado(id);
+                
+
+
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error al modificar el certificador: {ex.Message}");
+            }
+            return RedirectToAction("ObtenerDetalle", new { id = id });
         }
 
         [HttpDelete("{id}")]

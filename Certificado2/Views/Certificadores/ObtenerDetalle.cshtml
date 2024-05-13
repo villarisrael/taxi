@@ -1,0 +1,90 @@
+﻿<div style="margin-left:10px;margin-right:10px">
+    @model Certificado2.Modelos.Certificadores
+
+
+    @{
+        ViewData["Title"] = "Detalles";
+        Layout = "Certificadores";
+    }
+
+    <h1>Detalles</h1>
+
+    <div>
+        <h4>Ruta</h4>
+        <hr />
+        <dl class="row" style="margin-bottom: 15px;">
+           
+          
+            <dt class="col-sm-2">
+                @Html.Label("Razón social")
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.RazonSocial)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.Label("Responsable")
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.NombreResponsable)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.Label("E-mail")
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Email)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.Label("CP")
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.CP)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.Label("Teléfono")
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Telefono)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.Label("E-mail facturación")
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.EmailFacturacion)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.Label("RFC")
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.RFC)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.Label("Logo")
+            </dt>
+            <dd class="col-sm-10">
+                @{
+                    try
+                    {
+                        string imagen = Convert.ToBase64String(Model.Logo);
+
+                        <img src="data:image/jpeg;base64,@imagen" alt="Logo" width="100" />
+                    }
+                    catch (Exception ewr)
+                    {
+                        <img src="data:image/jpeg;base64,null" alt="Logo" width="100" />
+                    }
+                }
+            </dd>
+        </dl>
+    </div>
+    <br>
+    <div style="margin-bottom: 15px;">
+        <form action="~/Certificadores/Modificar" method="get">
+            <input type="hidden" name="id" value="@Model.Id">
+            <button type="submit" class="nav-link">Editar</button>
+        </form>
+        <a asp-action="Index" class="btn btn-outline-secondary">Regresar a la lista</a>
+    </div>
+</div>
+
+
+

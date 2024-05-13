@@ -3,6 +3,9 @@
 @{
     Layout = "Certificadores";
 }
+<form action="~/Certificadores/Crear" method="get">
+    <button type="submit" class="nav-link">Agregar certificado</button>
+</form>
 <div style="margin-left:10px;margin-right:10px">
     <h2>Listado de Certificadores</h2>
 
@@ -26,6 +29,9 @@
 
                 <th>
                     Logo
+                </th>
+                <th>
+                    Acciones
                 </th>
             </tr>
         </thead>
@@ -60,6 +66,23 @@
                                 <img src="data:image/jpeg;base64,null" alt="Logo" width="100" />
                             }
                             }
+                    </td>
+
+                    <td>
+                        <div>
+                            <form action="~/Certificadores/ObtenerDetalle" method="get">
+                                <input type="hidden" name="id" value="@certificador.Id">
+                                <button type="submit" class="nav-link">Detalles</button>
+                            </form>
+                            <form action="~/Certificadores/Modificar" method="get">
+                                <input type="hidden" name="id" value="@certificador.Id">
+                                <button type="submit" class="nav-link">Editar</button>
+                            </form>
+                            <form action="~/Certificadores/Suspender" method="post">
+                                <input type="hidden" name="id" value="@certificador.Id">
+                                <button type="submit" class="nav-link">Suspender</button>
+                            </form>
+                        </div>
                     </td>
                 </tr>
             }

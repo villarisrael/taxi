@@ -15,7 +15,9 @@ namespace Certificado2.Modelos
         public string Telefono { get; set; }
         public string EmailFacturacion { get; set; }
         public string RFC { get; set; }
+        public IFormFile Logo1 { get; set; }
         public byte[] Logo { get; set; }
+        public bool Suspendido { get; set; }
 
     }
 }
