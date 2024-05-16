@@ -82,7 +82,7 @@
             <input type="hidden" name="id" value="@Model.Id">
             <button type="submit" class="nav-link">Editar</button>
         </form>
-        <a asp-action="Index" class="btn btn-outline-secondary">Regresar a la lista</a>
+        <button type="button" class="btn btn-outline-secondary" onclick="location.href='@Url.Action("Index", "Certificadores")'">Regresar a la lista</button>
     </div>
 </div>
 

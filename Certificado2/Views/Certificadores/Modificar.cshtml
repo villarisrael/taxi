@@ -7,12 +7,16 @@
         Layout = "Certificadores";
     }
 
-    <h1>Modificar Cerificado</h1>
+  
 
     <h4></h4>
     <hr />
-    <div class="row">
-        <div class="col-md-4">
+    <div class="register_wrap section_padding_b">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-xl-5 col-lg-7 col-md-9">
+                    <div class="register_form padding_default shadow_sm">
+                        <h4>Modificar Cerificador</h4>
             <form method="post" asp-action="Modificar" enctype="multipart/form-data">
                 @*  <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 *@
@@ -62,12 +66,17 @@
 
                 <div class="form-group" style="margin-bottom: 15px;">
                     <input type="submit" value="Guardar" class="btn btn-primary" /> |
-                    <a asp-action="Index" class="btn btn-outline-secondary">Regresar a la lista</a>
+                                <button type="button" class="btn btn-outline-secondary" onclick="location.href='@Url.Action("Index", "Certificadores")'">Regresar a la lista</button>
+
                 </div>
             </form>
         </div>
     </div>
+            </div>
+        </div>
 
+
+    </div>
 
 </div>
 

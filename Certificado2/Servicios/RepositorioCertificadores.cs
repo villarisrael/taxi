@@ -1,5 +1,7 @@
 ﻿using Certificado2.Modelos;
+using Microsoft.AspNetCore.Authentication;
 using MySqlConnector;
+using System.Security.Claims;
 using static iText.StyledXmlParser.Jsoup.Select.Evaluator;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
@@ -19,6 +21,7 @@ namespace Certificado2.Servicios
 
         Task<Certificadores> ObtenerDetalleAsync(int idCertificadores);
         Task EliminarAsync(int id);
+        Task<bool> ValidarCredenciales(string usuario, string password);
 
     }
 
@@ -280,7 +283,61 @@ namespace Certificado2.Servicios
             return certificadores;
         }
 
+        public async Task<bool> ValidarCredenciales(string usuario, string password)
+        {
 
+
+            bool esValido = false;
+            UsuCertificadores certificador = null;
+
+            // Consulta SQL para verificar las credenciales
+            string consulta = "SELECT * FROM usucertificadores WHERE  Usuario = @Usuario AND Password = @Contraseña";
+
+            using (MySqlConnection conexion = new MySqlConnection(connectionString))
+            {
+                MySqlCommand comando = new MySqlCommand(consulta, conexion);
+                conexion.Open();
+                comando.Parameters.AddWithValue("@Usuario", usuario);
+                comando.Parameters.AddWithValue("@Contraseña", password);
+
+                try
+                {
+                    using (var lector = await comando.ExecuteReaderAsync())
+                    {
+                        if (await lector.ReadAsync())
+                        {
+                            certificador = new UsuCertificadores
+                            {
+                                Id = Convert.ToInt32(lector["idusucertificadores"]),
+                                Nombre = lector["Nombre"] as string,
+                                Usuario = lector["usuario"] as string,
+                                Password = lector["password"] as string,
+                                Email = lector["email"] as string,
+                                WhatsApp = lector["whatsapp"] as string,
+                                IdCentificador = lector["idcentificador"] as int? // Assuming nullable int
+
+                            };
+                            esValido = true;
+                        }
+                    }
+
+                    if (esValido)
+                    {
+                        // Si las credenciales son válidas, establecer la identidad y el usuario autenticado
+                        
+
+
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Manejar excepción
+                    Console.WriteLine("Error al verificar las credenciales: " + ex.Message);
+                }
+            }
+
+            return esValido;
+        }
 
 
     }

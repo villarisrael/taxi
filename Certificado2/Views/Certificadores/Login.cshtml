@@ -1,0 +1,67 @@
+﻿@model Certificado2.Modelos.LoginModel
+@{
+    ViewData["Title"] = "Crear";
+    Layout = "Certificadores";
+}
+
+<div class="register_wrap section_padding_b">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-xl-5 col-lg-7 col-md-9">
+                <!-- login box  -->
+                <div class="register_form padding_default shadow_sm">
+                    <h4 class="title_2">Ingreso del Certificador</h4>
+            
+                    <!-- input form  -->
+                    <form asp-action="Login" method="post">
+                        <div class="row">
+                            <input type="hidden" value="Certificador" name="Rol" id="Rol" />
+                            <!-- single input  -->
+                            <div class="col-12">
+                                <div class="single_billing_inp">
+                                    <label>Usuario <span>*</span></label>
+                                    <input type="text" placeholder="Escribe el usuario" name="Usuario">
+                                </div>
+                            </div>
+                            <!-- single input  -->
+                            <div class="col-12">
+                                <div class="single_billing_inp">
+                                    <label>Password <span>*</span></label>
+                                    <input type="password" placeholder="Contraseña" name="Password">
+                                </div>
+                            </div>
+                            <!-- remember me  -->
+                            <div class="col-12 mt-2 d-flex justify-content-between align-items-center">
+                                <!-- checkbox  -->
+                                <div class="custom_check check_2 d-flex align-items-center">
+                                    <input type="checkbox" class="check_inp" hidden id="save-default">
+                                    <label for="save-default">Recuerdame</label>
+                                </div>
+
+                                <a href="forgot-password.html" class="text-color">Lo olvidaste?</a>
+                            </div>
+
+                        
+                            <!-- button  -->
+                            <div class="col-12 mt-3">
+                                <button type="submit" class="default_btn xs_btn rounded px-4 d-block w-100">Ingresar</button>
+                            </div>
+
+                        </div>
+                    </form>
+                    <div>
+                        <p style="color:red"> @ViewBag.Mensaje</p>
+                    </div>
+
+                    <div class="text-center mt-3 mb-0">
+                        <p>
+                            No tienes cuenta?
+                            <button type="button" class="btn btn-link text-color" onclick="location.href='~/certificadores/Crear2'">Crea una como Certificador</button>
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
 using MySqlConnector;
 
 namespace Certificado2.Modelos
@@ -130,12 +132,17 @@ namespace Certificado2.Modelos
         }
 
 
-        public bool VerificarCredenciales(string usuario, string contraseña)
+        public async Task<bool> VerificarCredencialesAsync(string usuario, string contraseña)
+
+
         {
+
+
             bool esValido = false;
+            UsuCertificadores certificador = null;
 
             // Consulta SQL para verificar las credenciales
-            string consulta = "SELECT COUNT(*) FROM UsuCertificadores WHERE Usuario = @Usuario AND Password = @Contraseña";
+            string consulta = "SELECT * FROM usucertificadores WHERE  Usuario = @Usuario AND Password = @Contraseña";
 
             using (MySqlConnection conexion = new MySqlConnection(_cadenaConexion))
             {
@@ -145,9 +152,56 @@ namespace Certificado2.Modelos
 
                 try
                 {
-                    conexion.Open();
-                    int cantidad = Convert.ToInt32(comando.ExecuteScalar());
-                    esValido = cantidad > 0;
+                    using (var lector = await comando.ExecuteReaderAsync())
+                    {
+                        if (await lector.ReadAsync())
+                        {
+                            certificador = new UsuCertificadores
+                            {
+                                Id = Convert.ToInt32(lector["idusucertificadores"]),
+                                Nombre = lector["Nombre"] as string,
+                                Usuario = lector["usuario"] as string,
+                                Password = lector["password"] as string,
+                                Email = lector["email"] as string,
+                                WhatsApp = lector["whatsapp"] as string,
+                                IdCentificador = lector["idcentificador"] as int ? // Assuming nullable int
+                              
+                            };
+                            esValido = true;
+                        }
+                    }
+
+                    if (esValido)
+                    {
+                        // Si las credenciales son válidas, establecer la identidad y el usuario autenticado
+                        var claims = new List<Claim>
+                        {
+                            new Claim(ClaimTypes.NameIdentifier, certificador.Id.ToString()),
+                            new Claim(ClaimTypes.Name, certificador.Nombre),
+                             new Claim(ClaimTypes.Email, certificador.Email),
+                             new Claim(ClaimTypes.Actor, certificador.IdCentificador.ToString()),
+                            new Claim(ClaimTypes.Role, "Certificador") // Establecer el rol manualmente
+                        };
+
+                        var identity = new ClaimsIdentity(claims, "login");
+                        var principal = new ClaimsPrincipal(identity);
+
+                        // Acceder al contexto HTTP actual
+                        var httpContext = new DefaultHttpContext { User = principal };  // SE INVOCA LA VARIBALE User para acceder a los datos del logeo
+                        var authenticationService = httpContext.RequestServices.GetRequiredService<IAuthenticationService>();
+
+                        AuthenticationProperties authenticationProperties = null;
+
+                        string scheme = "Identity.Application";
+
+                        // Opciones adicionales para la autenticación (en este caso, nulo)
+                  
+                        // Iniciar sesión
+                        await authenticationService.SignInAsync(httpContext, scheme, principal, authenticationProperties);
+                        // Iniciar sesión
+                
+                    
+                }
                 }
                 catch (Exception ex)
                 {
