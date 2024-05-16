@@ -13,6 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddTransient<IRepositorioCertificadores, RepositorioCertificadores>();
+builder.Services.AddTransient<IRepositorioMonedas, RepositorioMonedas>();
 
 var connectionString = builder.Configuration.GetConnectionString("ConexionMySql");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
