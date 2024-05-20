@@ -1,9 +1,10 @@
 ﻿@model IEnumerable<Certificado2.Modelos.Certificadores>
 
 @{
-    Layout = "Certificadores";
+    Layout = "_Layout";
 }
-<form action="~/Certificadores/Crear" method="get">
+<div style="margin-top:110px">
+<form action="~/Certificadores/Crear" method="get" >
     <button type="submit" class="nav-link">Agregar certificador</button>
 </form>
 <div style="margin-left:10px;margin-right:10px">
@@ -88,6 +89,7 @@
             }
         </tbody>
     </table>
+</div>
 </div>
 
 @* Paginación *@

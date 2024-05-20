@@ -9,8 +9,10 @@ using iText.Kernel.Geom;
 using iText.Layout.Properties;
 using iText.Layout.Element;
 
+
 using Document = iText.Layout.Document;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Identity;
 
 namespace Certificado2.Controllers
 {
@@ -18,11 +20,13 @@ namespace Certificado2.Controllers
     public class CertificadoresController : Controller
     {
         private readonly IRepositorioCertificadores _repositorioCertificadores;
-
+       
         public CertificadoresController(IRepositorioCertificadores repositorioCertificadores)
         {
             _repositorioCertificadores = repositorioCertificadores;
+       
         }
+
 
         //[HttpGet]
         public async Task<IActionResult> Index(string sortOrder, string currentFilter, string searchString, int page = 1, int pageSize = 20)
@@ -188,39 +192,7 @@ namespace Certificado2.Controllers
         }
 
 
-        public IActionResult Login()
 
-        {
-            LoginModel login = new LoginModel();
-            login.Rol = "Certificador";
-            ViewBag.Mensaje = "";
-            return View(login);
-        }
-
-        // Método para manejar la solicitud de inicio de sesión
-        [HttpPost]
-        public async Task<IActionResult> Login(LoginModel login)
-        {
-            
-
-            var loginValido = await _repositorioCertificadores.ValidarCredenciales(login.Usuario, login.Password);
-
-            if (loginValido)
-            {
-              
-                // Aquí puedes realizar otras acciones, como establecer la sesión del usuario, etc.
-                return RedirectToAction("Index", "Home"); // Redirigir a la página principal después del inicio de sesión exitoso
-                
-            }
-            else
-            {
-                // Si las credenciales no son válidas, puedes redirigir a una página de error de inicio de sesión
-                // o mostrar un mensaje de error en la vista de inicio de sesión
-               
-                ViewBag.Mensaje = "Usuario o contraseña incorrectos";
-                return View(login); // Redirigir a la vista de inicio de sesión
-            }
-        }
 
     }
 }

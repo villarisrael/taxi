@@ -8,13 +8,14 @@ using iText.Layout.Properties;
 using iText.Layout;
 using Microsoft.AspNetCore.Mvc;
 using MySqlConnector;
+using System.Runtime.ConstrainedExecution;
 
 namespace Certificado2.Servicios
 {
 
     public interface IRepositorioMonedas
     {
-        Task<IEnumerable<Moneda>> ObtenerDatosMoneda(string serie, int folio);
+        Task<VMoneda> ObtenerDatosMoneda(string serie, int folio);
         Task<byte[]> ObtenerLogotipoEmpresaAsync();
     }
     public class RepositorioMonedas : IRepositorioMonedas
@@ -59,9 +60,9 @@ namespace Certificado2.Servicios
             return logotipo;
         }
 
-        public async Task<IEnumerable<Moneda>> ObtenerDatosMoneda(string serie, int folio)
+        public async Task<VMoneda> ObtenerDatosMoneda(string serie, int folio)
         {
-            List<Moneda> listado = new List<Moneda>();
+            Moneda listado = new Moneda();
 
             try
             {
@@ -70,41 +71,43 @@ namespace Certificado2.Servicios
                     await connection.OpenAsync();
 
                     // Error en esta consulta, no tengo acceso a la BD
-                    string selectQuery = $"SELECT * FROM MONEDA WHERE SERIE = '{serie}' AND FOLIO = {folio}";
+                    string selectQuery = $"SELECT * FROM Vmonedas WHERE SERIE = '{serie}' AND FOLIO = {folio}";
 
                     using (var selectCommand = new MySqlCommand(selectQuery, connection))
                     {
                         using (var reader = await selectCommand.ExecuteReaderAsync())
                         {
-                            while (await reader.ReadAsync())
-                            {
-                                Moneda certificador = new Moneda
+                            reader.ReadAsync();
+                            
+                                VMoneda certificador = new VMoneda
                                 {
-                                    IdCertificado = (int)reader["id"],
-                                    Serie = reader["RazonSocial"] as string,
-                                    Folio = (int)reader["NombreResponsable"],
-                                    IdCertificador = (int)reader["Email"],
-                                    IdUsuario = (int)reader["CP"],
-                                    Nombre = reader["Telefono"] as string,
-                                    Ano = (int)reader["Emailfacturacion"],
-                                    Ceca = reader["RFC"] as string,
+                                    RazonSocial = (string)reader["RazonSocial"],
+                                    NombreResponsable= (string)reader["NombreResponsable"],
+                                    Serie = reader["Serie"] as string,
+                                    Folio = (int)reader["Folio"],
+                                 Telefono = reader["Telefono"] as string,
+                                    Moneda = reader["Moneda"] as string,
+                                    Ano = (string)reader["ano"],
+                                    Ceca = reader["ceca"] as string,
                                     Material = reader["Material"] as string,
                                     Estado = reader["Estado"] as string,
-                                    Foto = reader["logo"] as byte[]
+                                    fecha = (DateTime) reader["fecha"] ,
+                                    Foto = reader["Foto"] as byte[]
                                 };
 
-                                listado.Add(certificador);
-                            }
+                            return certificador;
                         }
+                        
                     }
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error al obtener los datos de la moneda: {ex.Message}");
+                return new VMoneda();
             }
 
-            return listado;
+           
         }
 
     }

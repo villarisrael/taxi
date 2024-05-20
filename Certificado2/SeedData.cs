@@ -11,7 +11,7 @@ namespace Certificado2
         {
             var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
-            string[] roleNames = { "Admin", "User" };
+            string[] roleNames = { "Admin", "User" , "Certificador"};
             IdentityResult roleResult;
 
             foreach (var roleName in roleNames)
@@ -23,18 +23,31 @@ namespace Certificado2
                 }
             }
 
-            var user = await userManager.FindByEmailAsync("soporte@vigmaconsultores.com");
+            var user = await userManager.FindByEmailAsync("default@certificadodeauntencidad.com");
 
             if (user == null)
             {
                 user = new IdentityUser()
                 {
-                    UserName = "admin",
-                    Email = "soporte@vigmaconsultores.com",
+                    UserName = "default",
+                    Email = "soporte@certificadodeauntencidad.com",
                 };
                 await userManager.CreateAsync(user, "Vigma@2024*");
             }
             await userManager.AddToRoleAsync(user, "Admin");
+
+            var user2 = await userManager.FindByEmailAsync("default@certificadodeauntencidad.com");
+
+            if (user2 == null)
+            {
+                user2 = new IdentityUser()
+                {
+                    UserName = "default",
+                    Email = "default@certificadodeauntencidad.com",
+                };
+                await userManager.CreateAsync(user2, "Vigma@2024*");
+            }
+            await userManager.AddToRoleAsync(user2, "User");
         }
     }
 }

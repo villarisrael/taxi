@@ -1,10 +1,10 @@
-﻿@model Certificado2.Modelos.LoginModel
+﻿@model Certificado2.Modelos.LoginViewModel
 @{
-    ViewData["Title"] = "Crear";
-    Layout = "Certificadores";
+    ViewData["Title"] = "Ingresar";
+    Layout = "_Layout";
 }
 
-<div class="register_wrap section_padding_b">
+<div class="register_wrap section_padding_b" style="margin-top:110px">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-xl-5 col-lg-7 col-md-9">
@@ -20,7 +20,7 @@
                             <div class="col-12">
                                 <div class="single_billing_inp">
                                     <label>Usuario <span>*</span></label>
-                                    <input type="text" placeholder="Escribe el usuario" name="Usuario">
+                                    <input type="text" placeholder="Escribe el usuario" name="UserName">
                                 </div>
                             </div>
                             <!-- single input  -->
@@ -34,7 +34,7 @@
                             <div class="col-12 mt-2 d-flex justify-content-between align-items-center">
                                 <!-- checkbox  -->
                                 <div class="custom_check check_2 d-flex align-items-center">
-                                    <input type="checkbox" class="check_inp" hidden id="save-default">
+                                    <input type="checkbox" class="check_inp" hidden id="save-default" name="RememberMe">
                                     <label for="save-default">Recuerdame</label>
                                 </div>
 
