@@ -29,9 +29,18 @@ namespace Certificado2.Controllers
 
 
         //[HttpGet]
-        public async Task<IActionResult> Index(string sortOrder, string currentFilter, string searchString, int page = 1, int pageSize = 20)
+        public async Task<IActionResult> Index( string Certificador, int page = 1, int pageSize = 20)
         {
-            var listadoFuentesAbastecimiento = await _repositorioCertificadores.ObtenerListado();
+            IEnumerable<Certificadores> listadoFuentesAbastecimiento = new List<Certificadores>(); ;
+
+            if (Certificador == string.Empty)
+            {
+                listadoFuentesAbastecimiento = await _repositorioCertificadores.ObtenerListado();
+            }
+            else
+            {
+                listadoFuentesAbastecimiento = await _repositorioCertificadores.ObtenerListadoCertifica(Certificador);
+            }
             var elementosPag = listadoFuentesAbastecimiento.Skip((page - 1) * pageSize).Take(pageSize);
 
             // Paginación
@@ -164,7 +173,7 @@ namespace Certificado2.Controllers
             try
             {
                
-                    await _repositorioCertificadores.SuspenderCertificado(id);
+                    await _repositorioCertificadores.SuspenderCertificador(id);
                 
 
 
@@ -176,6 +185,27 @@ namespace Certificado2.Controllers
             }
             return RedirectToAction("ObtenerDetalle", new { id = id });
         }
+
+        [HttpPost]
+        public async Task<ActionResult> Activar(int id)
+        {
+            try
+            {
+
+                await _repositorioCertificadores.ActivarCertificador(id);
+
+
+
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error al modificar el certificador: {ex.Message}");
+            }
+            return RedirectToAction("ObtenerDetalle", new { id = id });
+        }
+
+
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> Eliminar(int id)

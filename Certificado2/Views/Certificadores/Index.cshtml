@@ -3,14 +3,156 @@
 @{
     Layout = "_Layout";
 }
-<div style="margin-top:110px">
-<form action="~/Certificadores/Crear" method="get" >
-    <button type="submit" class="nav-link">Agregar certificador</button>
-</form>
-<div style="margin-left:10px;margin-right:10px">
-    <h2>Listado de Certificadores</h2>
 
-    <table class="table">
+
+<link href="~/css/vigma.css" rel="stylesheet" />
+<link href="~/assets/css/font-awesome/css/font-awesome.css" rel="stylesheet" />
+<link href="~/assets/css/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+<a href="~/assets/css/font-awesome/css/font-awesome.css.map">~/assets/css/font-awesome/css/font-awesome.css.map</a>
+<style>
+    .Buscador {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        width: 80%;
+        margin: 10px auto;
+        position: relative;
+    }
+
+    .row {
+        display: flex;
+        width: 100%;
+        margin-bottom: 6px;
+        justify-content: space-between;
+    }
+
+    .Columna-input {
+        display: flex;
+        align-items: center;
+        position: relative;
+        width: 32%;
+    }
+
+        .Columna-input p {
+            width: auto;
+            margin-right: 10px;
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+    input[type="date"], .effect-input {
+        font: 15px/24px "Lato", Arial, sans-serif;
+        color: #333;
+        width: 100%;
+        padding: 10px 15px;
+        border-radius: 3px;
+        box-sizing: border-box;
+        border: none;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        position: relative;
+        padding-left: 40px; /* Add padding to the left to make space for the icon */
+    }
+
+        input[type="date"]:focus, .effect-input:focus {
+            outline: none;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+
+    .effect-input {
+        border-bottom: 1px solid #ccc;
+    }
+
+    .focus-border {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        z-index: 99;
+    }
+
+        .focus-border:before,
+        .focus-border:after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 100%;
+            background-color: #3399FF;
+            transition: 0.4s;
+        }
+
+        .focus-border:after {
+            left: auto;
+            right: 0;
+        }
+
+    .effect-input:focus ~ .focus-border:before,
+    .effect-input:focus ~ .focus-border:after {
+        width: 50%;
+        transition: 0.4s;
+    }
+
+    .icon {
+        position: absolute;
+        top: 50%;
+        left: 10px; /* Position the icon correctly */
+        transform: translateY(-50%);
+        background: #DEDEDE;
+        color: #847384;
+        padding: 5px 10px;
+        border-top-left-radius: 3px;
+        border-bottom-left-radius: 3px;
+        z-index: 1;
+    }
+
+    input[type="text"] {
+        padding-left: 40px;
+    }
+</style>
+
+<div style="margin-top:110px">
+
+<div style="margin-left:10px;margin-right:10px">
+        <form action="~/Certificadores/Crear" method="get">
+            <button type="submit" class="nav-link">Agregar certificador</button>
+        </form>
+     <div class="card">
+     <div class="card-header">
+            <h2>Listado de Certificadores</h2>
+    </div>
+    <div class="card-body">
+                <div class="navbar-form navbar-left">
+                     <form action="~/Certificadores/Index" method="get">
+                    <div class="Buscador">
+
+                        <div class="row ">
+                            <div class="Columna-input">
+                                <p></p>
+                                <span id="client-icon" class="icon"><i class="fa fa-user" aria-hidden="true"></i></span>
+                                <input class="effect-input" type="text" placeholder="Certificador" id="Certificador" name="Certificador">
+                                <span class="focus-border"></span>
+                            </div>
+                            <div class="Columna-input">
+                                <button type="submit" value="Aplicar" class="btn btn-outline-primary">
+                                    Buscar  <i class="fa fa-search  " title="Buscar"></i>
+                                </button>
+                                <span class="sr-only">(current)</span>
+                            </div>
+                        </div>
+                   
+
+
+                    </div>
+                    </form>
+
+
+                </div>
+    </div>
+    <div class="card-body">
+        <div class="table-vigma-container">
+            <table class="table-vigma">
         <thead>
             <tr>
                 <th>
@@ -31,7 +173,7 @@
                 <th>
                     Logo
                 </th>
-                <th>
+                <th colspan="3">
                     Acciones
                 </th>
             </tr>
@@ -68,28 +210,51 @@
                             }
                             }
                     </td>
+                    <td>
+                                    <div>
+                                        <a href="~/Certificadores/ObtenerDetalle?id=@certificador.Id" class="nav-link btn-success">Detalles</a>
+                                            <a href="~/Certificadores/Modificar?id=@certificador.Id" class="nav-link btn-secondary">Editar</a>
 
+                                        </div>
+                     </td>
                     <td>
                         <div>
-                            <form action="~/Certificadores/ObtenerDetalle" method="get">
-                                <input type="hidden" name="id" value="@certificador.Id">
-                                <button type="submit" class="nav-link">Detalles</button>
-                            </form>
-                            <form action="~/Certificadores/Modificar" method="get">
-                                <input type="hidden" name="id" value="@certificador.Id">
-                                <button type="submit" class="nav-link">Editar</button>
-                            </form>
-                            <form action="~/Certificadores/Suspender" method="post">
-                                <input type="hidden" name="id" value="@certificador.Id">
-                                <button type="submit" class="nav-link">Suspender</button>
-                            </form>
+                                        <a href="~/Certificadores/Modificar?id=@certificador.Id" class="nav-link btn-info">Listado de usuarios</a>
                         </div>
                     </td>
+                    <td>
+                                        @if (certificador.Suspendido == false)
+                                        {
+                                            <div>
+                                                <a href="javascript:void(0);" onclick="event.preventDefault(); document.getElementById('suspender-form-@certificador.Id').submit();" class="nav-link btn-danger">Suspender</a>
+                                                <form id="suspender-form-@certificador.Id" action="~/Certificadores/Suspender" method="post" style="display: none;">
+                                                    <input type="hidden" name="id" value="@certificador.Id">
+                                                </form>
+
+                                            </div>
+                                        }
+                                        @if (certificador.Suspendido == true)
+                                        {
+                                            <div>
+                                                <a href="javascript:void(0);" onclick="event.preventDefault(); document.getElementById('suspender-form-@certificador.Id').submit();" class="nav-link btn-success">Activar</a>
+                                                <form id="suspender-form-@certificador.Id" action="~/Certificadores/Activar" method="post" style="display: none;">
+                                                    <input type="hidden" name="id" value="@certificador.Id">
+                                                </form>
+
+                                            </div>
+                                        }
+                                    </td>
+                                    
+                                      
+                               
                 </tr>
             }
         </tbody>
     </table>
-</div>
+        </div>
+    </div>
+        </div>
+    </div>
 </div>
 
 @* Paginación *@

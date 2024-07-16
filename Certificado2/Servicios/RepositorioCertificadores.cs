@@ -15,10 +15,11 @@ namespace Certificado2.Servicios
     {
         Task CrearAsync(Certificadores objFuentesAbastecimiento);
         Task<IEnumerable<Certificadores>> ObtenerListado();
+        Task<IEnumerable<Certificadores>> ObtenerListadoCertifica(string _Certificador);
         Task ModificarAsync(Certificadores objFuentesAbastecimiento);
         Task ModificarCLogoAsync(Certificadores objFuentesAbastecimiento);
-        Task SuspenderCertificado(int id);
-
+        Task SuspenderCertificador(int id);
+        Task ActivarCertificador(int id);
         Task<Certificadores> ObtenerDetalleAsync(int idCertificadores);
         Task EliminarAsync(int id);
         Task<bool> ValidarCredenciales(string usuario, string password);
@@ -65,6 +66,52 @@ namespace Certificado2.Servicios
                                     RFC = reader["RFC"] as string,
                                     Logo = reader["logo"] as byte[],
                                     Suspendido = (bool)reader["Suspendido"] 
+                                };
+
+                                listado.Add(certificador);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al obtener listado de certificadores: {ex.Message}");
+            }
+
+            return listado;
+        }
+
+        public async Task<IEnumerable<Certificadores>> ObtenerListadoCertifica(string _certificador)
+        {
+            List<Certificadores> listado = new List<Certificadores>();
+
+            try
+            {
+                using (MySqlConnection connection = new MySqlConnection(connectionString))
+                {
+                    await connection.OpenAsync();
+
+                    string selectQuery = "SELECT * FROM certificadores where  RazonSocial like '%" + _certificador + "%' or  RazonSocial like '" + _certificador + "%' or  NombreResponsable like '%"+ _certificador+ "%'  or  NombreResponsable like '"+ _certificador+ "%' " ;
+
+                    using (var selectCommand = new MySqlCommand(selectQuery, connection))
+                    {
+                        using (var reader = await selectCommand.ExecuteReaderAsync())
+                        {
+                            while (await reader.ReadAsync())
+                            {
+                                Certificadores certificador = new Certificadores
+                                {
+                                    Id = (int)reader["id"],
+                                    RazonSocial = reader["RazonSocial"] as string,
+                                    NombreResponsable = reader["NombreResponsable"] as string,
+                                    Email = reader["Email"] as string,
+                                    CP = reader["CP"] as string,
+                                    Telefono = reader["Telefono"] as string,
+                                    EmailFacturacion = reader["Emailfacturacion"] as string,
+                                    RFC = reader["RFC"] as string,
+                                    Logo = reader["logo"] as byte[],
+                                    Suspendido = (bool)reader["Suspendido"]
                                 };
 
                                 listado.Add(certificador);
@@ -183,7 +230,7 @@ namespace Certificado2.Servicios
             }
         }
         
-        public async Task SuspenderCertificado(int id)
+        public async Task SuspenderCertificador(int id)
         {
             try
             {
@@ -198,6 +245,33 @@ namespace Certificado2.Servicios
                         
                         updateCommand.Parameters.AddWithValue("@Suspendido", true);
                        
+                        updateCommand.Parameters.AddWithValue("@Id", id);
+
+                        await updateCommand.ExecuteNonQueryAsync();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al suspender certificador: {ex.Message}");
+            }
+        }
+
+        public async Task ActivarCertificador(int id)
+        {
+            try
+            {
+                using (MySqlConnection connection = new MySqlConnection(connectionString))
+                {
+                    await connection.OpenAsync();
+
+                    string updateQuery = "UPDATE certificadores SET `Suspendido` = @Suspendido WHERE `id` = @Id";
+
+                    using (var updateCommand = new MySqlCommand(updateQuery, connection))
+                    {
+
+                        updateCommand.Parameters.AddWithValue("@Suspendido", false);
+
                         updateCommand.Parameters.AddWithValue("@Id", id);
 
                         await updateCommand.ExecuteNonQueryAsync();
