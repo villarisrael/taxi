@@ -222,7 +222,159 @@ namespace Certificado2.Controllers
         }
 
 
+        //[HttpGet]
+        public async Task<IActionResult> ListaUsuarios(int Certificador=0,string Usuario="", int page = 1, int pageSize = 20)
+        {
+            IEnumerable<UsuCertificadores> listadoUsuarios = new List<UsuCertificadores>(); 
+            ViewBag.IDCertificador = Certificador;
+
+            listadoUsuarios = await _repositorioCertificadores.ObtenerListadoUsuarios(Certificador, Usuario);
+            if (Usuario!="")
+            {
+                listadoUsuarios = await _repositorioCertificadores.ObtenerListadoUsuarios(Certificador, Usuario);
+
+            }
+            var elementosPag = listadoUsuarios.Skip((page - 1) * pageSize).Take(pageSize);
+
+            // Paginación
+            int count = listadoUsuarios.Count(); // Número total de elementos
+            ViewBag.TotalPages = (int)Math.Ceiling((double)count / pageSize);
+            ViewBag.CurrentPage = page;
+
+            return View(elementosPag);
+        }
+
+        public IActionResult AgregarUsuario(UsuCertificadores usuarios, int IDCertificador, string mensaje = "")
+        {
+            ViewBag.Mensaje = mensaje;
+        
+            usuarios.IdCentificador = IDCertificador;
+            return View(usuarios);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AgregarUsuario(UsuCertificadores usuarioscer, string mensaje = "", string Password1="")
+        {
+            ViewBag.Mensaje = mensaje;
+
+            IEnumerable<UsuCertificadores>  listadoUsuarios = await _repositorioCertificadores.ObtenerListadoUsuarios((int)usuarioscer.IdCentificador, "");
+
+            
+            try
+            {
+               
+                await _repositorioCertificadores.AgregarUsuario(usuarioscer);
+                // Redirige a la acción Index
+                return RedirectToAction("ListaUsuarios" , new { Certificador = usuarioscer.IdCentificador});
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error al agregar usuario: {ex.Message}");
+            }
+        }
+
+        public async Task<IActionResult> GetJsonUsuarios(string nombre, string username, int IDCertificador)
+        {
+            IEnumerable<UsuCertificadores> listadoUsuarios = await _repositorioCertificadores.ObtenerListadoUsuarios(IDCertificador, "");
+            string mensaje = "";
+            try
+            {
+                bool usuariosU = listadoUsuarios.Any(u => u.Usuario == username);
+                bool usuariosN = listadoUsuarios.Any(u => u.Nombre == nombre);
+
+                if (usuariosN)
+                {
+                    mensaje = "Ya existe un registro con este Nombre, intente nuevamente.";
+                }
+                if (usuariosU)
+                {
+                    if (!string.IsNullOrEmpty(mensaje))
+                    {
+                        mensaje += "\n";
+                    }
+                    mensaje += "Ya existe un registro con este Username, intente nuevamente.";
+                }
+            }
+            catch (Exception e)
+            {
+                // Manejar la excepción de manera adecuada, quizás loguearla
+                mensaje = "Ocurrió un error al procesar la solicitud.";
+            }
+
+            return Json(new { mensaje });
+        }
+        public async Task<IActionResult> GetJsonUsuariosE(int id,string nombre, string username, int IDCertificador)
+        {
+            IEnumerable<UsuCertificadores> listadoUsuarios = await _repositorioCertificadores.ObtenerListadoUsuarios(IDCertificador, "");
+            string mensaje = "";
+            try
+            {
+                bool usuariosU = listadoUsuarios.Any(u => u.Usuario == username && u.Id != id);
+                bool usuariosN = listadoUsuarios.Any(u => u.Nombre == nombre && u.Id != id);
+              
+                if (usuariosN)
+                {
+                    mensaje = "Ya existe un registro con este Nombre, intente nuevamente.";
+                }
+                if (usuariosU)
+                {
+                    if (!string.IsNullOrEmpty(mensaje))
+                    {
+                        mensaje += "\n";
+                    }
+                    mensaje += "Ya existe un registro con este Username, intente nuevamente.";
+                }
+            }
+            catch (Exception e)
+            {
+                // Manejar la excepción de manera adecuada, quizás loguearla
+                mensaje = "Ocurrió un error al procesar la solicitud.";
+            }
+
+            return Json(new { mensaje });
+        }
+
+        public async Task<ActionResult> ModificarUsuario(int id, string mensaje="")
+        {
+            ViewBag.Mensaje = mensaje;
+
+            var certificador = await _repositorioCertificadores.ObtenerDetalleUsuario(id);
+            return View(certificador);
+        }
 
 
+        [HttpPost]
+        public async Task<ActionResult> ModificarUsuario(UsuCertificadores certificador, string mensaje = "", string Password1 = "")
+        {
+           
+            try
+            {
+                
+                    await _repositorioCertificadores.ModificarUsuario(certificador);
+               
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error al modificar el certificador: {ex.Message}");
+            }
+            return RedirectToAction("DetalleUsuario", new { id = certificador.Id });
+        }
+
+        public async Task<ActionResult> DetalleUsuario(int id)
+        {
+            try
+            {
+                var certificador = await _repositorioCertificadores.ObtenerDetalleUsuario(id);
+                return View(certificador);
+
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error al obtener el detalle del usuario: {ex.Message}");
+            }
+        }
     }
 }

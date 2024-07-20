@@ -23,7 +23,11 @@ namespace Certificado2.Servicios
         Task<Certificadores> ObtenerDetalleAsync(int idCertificadores);
         Task EliminarAsync(int id);
         Task<bool> ValidarCredenciales(string usuario, string password);
+        Task<IEnumerable<UsuCertificadores>> ObtenerListadoUsuarios(int _Certificador, string Usuario);
+        Task AgregarUsuario(UsuCertificadores usuarios);
+        Task<UsuCertificadores> ObtenerDetalleUsuario(int idCertificadores);
 
+        Task ModificarUsuario(UsuCertificadores objFuentesAbastecimiento);
     }
 
     public class RepositorioCertificadores: IRepositorioCertificadores
@@ -413,6 +417,157 @@ namespace Certificado2.Servicios
             return esValido;
         }
 
+
+        public async Task<IEnumerable<UsuCertificadores>> ObtenerListadoUsuarios(int _certificador, string U)
+        {
+            List<UsuCertificadores> listado = new List<UsuCertificadores>();
+
+            try
+            {
+                using (MySqlConnection connection = new MySqlConnection(connectionString))
+                {
+                    await connection.OpenAsync();
+
+                    string selectQuery = "SELECT * FROM UsuCertificadores where  idcentificador=" + _certificador;
+                    if (U!="")
+                    {
+                        selectQuery = "SELECT * FROM UsuCertificadores where  idcentificador=" + _certificador + " and nombre like '%"+U+"%'";
+                    }
+                   
+                    using (var selectCommand = new MySqlCommand(selectQuery, connection))
+                    {
+                        using (var reader = await selectCommand.ExecuteReaderAsync())
+                        {
+                            while (await reader.ReadAsync())
+                            {
+                                UsuCertificadores certificador = new UsuCertificadores
+                                {
+                                    Id = (int)reader["idusucertificadores"],
+                                    Nombre = reader["Nombre"] as string,
+                                    Usuario = reader["usuario"] as string,
+                                    Password = reader["password"] as string,
+                                    Email = reader["email"] as string,
+                                    WhatsApp = reader["whatsapp"] as string,
+                                    IdCentificador = (int)reader["idcentificador"]
+
+                                };
+
+                                listado.Add(certificador);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al obtener listado de usuarios: {ex.Message}");
+            }
+
+            return listado;
+        }
+        public async Task AgregarUsuario(UsuCertificadores _Usuarios)
+        {
+            try
+            {
+                using (MySqlConnection connection = new MySqlConnection(connectionString))
+                {
+                    await connection.OpenAsync();
+
+                    string insertQuery = "INSERT INTO UsuCertificadores (`Nombre`, `usuario`, `password`, `email`, `whatsapp`, `idcentificador`) VALUES " +
+                                         "(@Nombre, @usuario, @password, @email, @whatsapp, @idcentificador)";
+
+                    using (var insertCommand = new MySqlCommand(insertQuery, connection))
+                    {
+                        insertCommand.Parameters.AddWithValue("@Nombre", _Usuarios.Nombre);
+                        insertCommand.Parameters.AddWithValue("@usuario", _Usuarios.Usuario);
+                        insertCommand.Parameters.AddWithValue("@password", _Usuarios.Password);
+                        insertCommand.Parameters.AddWithValue("@email", _Usuarios.Email);
+                        insertCommand.Parameters.AddWithValue("@whatsapp", _Usuarios.WhatsApp);
+                        insertCommand.Parameters.AddWithValue("@idcentificador", _Usuarios.IdCentificador);
+                       
+
+                        await insertCommand.ExecuteNonQueryAsync();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al agregar usuario: {ex.Message}");
+            }
+        }
+
+        public async Task<UsuCertificadores> ObtenerDetalleUsuario(int id)
+        {
+            UsuCertificadores certificadores = null;
+
+            try
+            {
+                using (MySqlConnection connection = new MySqlConnection(connectionString))
+                {
+                    await connection.OpenAsync();
+
+                    string selectQuery = "SELECT * FROM UsuCertificadores WHERE idusucertificadores = @idusucertificadores";
+
+                    using (var selectCommand = new MySqlCommand(selectQuery, connection))
+                    {
+                        selectCommand.Parameters.AddWithValue("@idusucertificadores", id);
+
+                        using (var reader = await selectCommand.ExecuteReaderAsync())
+                        {
+                            if (await reader.ReadAsync())
+                            {
+                                certificadores = new UsuCertificadores
+                                {
+                                    Id = (int)reader["idusucertificadores"],
+                                    Nombre = reader["Nombre"] as string,
+                                    Usuario = reader["usuario"] as string,
+                                    Password = reader["password"] as string,
+                                    Email = reader["email"] as string,
+                                    WhatsApp = reader["whatsapp"] as string,
+                                    IdCentificador = (int)reader["idcentificador"]
+                                };
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al obtener detalle de certificador: {ex.Message}");
+            }
+
+            return certificadores;
+        }
+        public async Task ModificarUsuario(UsuCertificadores objCertificadores)
+        {
+            try
+            {
+                using (MySqlConnection connection = new MySqlConnection(connectionString))
+                {
+                    await connection.OpenAsync();
+
+                    string updateQuery = "UPDATE UsuCertificadores SET  `Nombre` = @Nombre, `usuario` = @usuario, `password` = @password, `email` = @email, `whatsapp` = @whatsapp, `idcentificador` = @idcentificador WHERE `idusucertificadores` = @Id";
+
+                    using (var updateCommand = new MySqlCommand(updateQuery, connection))
+                    {
+                        updateCommand.Parameters.AddWithValue("@Nombre", objCertificadores.Nombre);
+                        updateCommand.Parameters.AddWithValue("@usuario", objCertificadores.Usuario);
+                        updateCommand.Parameters.AddWithValue("@password", objCertificadores.Password);
+                        updateCommand.Parameters.AddWithValue("@email", objCertificadores.Email);
+                        updateCommand.Parameters.AddWithValue("@whatsapp", objCertificadores.WhatsApp);
+                        updateCommand.Parameters.AddWithValue("@idcentificador", objCertificadores.IdCentificador);
+                       
+                        updateCommand.Parameters.AddWithValue("@idusucertificadores", objCertificadores.Id);
+
+                        await updateCommand.ExecuteNonQueryAsync();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al actualizar usuario: {ex.Message}");
+            }
+        }
 
     }
 }

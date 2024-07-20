@@ -1,0 +1,120 @@
+﻿<div style="margin-left:10px;margin-right:10px">
+    @* <link rel="stylesheet" href="~/css/estilo.css">*@
+    @model Certificado2.Modelos.UsuCertificadores
+
+    @{
+        ViewData["Title"] = "Modificar";
+        Layout = "_layout";
+    }
+
+    @if (ViewBag.Mensaje != "")
+    {
+        <div class="alert alert-danger">@ViewBag.Mensaje</div>
+    }
+
+
+    <h4></h4>
+    <hr />
+    <div class="register_wrap section_padding_b" style="padding-top:100px">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-xl-5 col-lg-7 col-md-9">
+                    <div class="register_form padding_default shadow_sm">
+                        <h4>Modificar Usuario</h4>
+                        <form method="post" id="miFormulario" onsubmit="validarFormulario(event)" asp-action="ModificarUsuario" enctype="multipart/form-data">
+                          
+                            <input type="hidden"  id="Id" name="Id" value="@Model.Id"/>
+                            <input name="IdCentificador" id="IdCentificador" value="@Model.IdCentificador" type="hidden" />
+                            <div class="form-group" style="margin-bottom: 15px;">
+                                <label asp-for="Nombre" class="control-label">Nombre</label>
+                                <input asp-for="Nombre" id="Nombre" value="@Model.Nombre" class="form-control" placeholder="Ingresar Nombre" name="Nombre" />
+                                <span asp-validation-for="Nombre" class="text-danger"></span>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 15px;">
+                                <label asp-for="Usuario" class="control-label">Username</label>
+                                <input asp-for="Usuario" id="Usuario" value="@Model.Usuario" class="form-control" placeholder="Ingresar Username" name="Usuario" />
+                                <span asp-validation-for="Usuario" class="text-danger"></span>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 15px;">
+                                <label asp-for="Password" class="control-label">Password</label>
+                                <input asp-for="Password" id="Password" value="@Model.Password" type="password" class="form-control" placeholder="Ingresar Password" name="Password" />
+                                <span asp-validation-for="Password" class="text-danger"></span>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 15px;">
+                                <label asp-for="Password1" class="control-label">Confirmar Password</label>
+                                <input asp-for="Password1" id="Password1" value="@Model.Password" type="password" class="form-control" placeholder="Ingresar nuevamente Password" name="Password1" />
+                                <span asp-validation-for="Password1" class="text-danger"></span>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 15px;">
+                                <label asp-for="Email" class="control-label">Email</label>
+                                <input asp-for="Email" value="@Model.Email" class="form-control" placeholder="Ingresar Email" name="Email" />
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 15px;">
+                                <label asp-for="WhatsApp" class="control-label">WhatsApp</label>
+                                <input asp-for="WhatsApp" value="@Model.WhatsApp" maxlength="10" class="form-control" placeholder="Ingresar WhatsApp" name="WhatsApp" />
+                                <span asp-validation-for="WhatsApp" class="text-danger"></span>
+                            </div>
+
+
+                            <div class="form-group" style="margin-bottom: 15px;">
+                                <input type="submit" value="Guardar" class="btn btn-primary" /> |
+                                <button type="button" class="btn btn-outline-secondary" onclick="location.href='@Url.Action("ListaUsuarios", "Certificadores", new{Certificador= Model.IdCentificador})'">Regresar a la lista</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+</div>
+
+
+
+<script src="~/lib/jquery/dist/jquery.min.js" type="text/javascript"></script>
+<script>
+
+    function validarFormulario(event) {
+        event.preventDefault(); // Evita el envío del formulario inicialmente
+
+        var p = document.getElementById("Password").value;
+        var p1 = document.getElementById("Password1").value;
+
+        // var IDCertificador = document.getElementById("IdCentificador").value;
+        // var nombre = document.getElementById("Nombre").value;
+        // var username = document.getElementById("Usuario").value;
+
+        if (p != p1) {
+            alert("La contraseña y la confirmación no coinciden");
+            // event.preventDefault(); // Evita el envío del formulario
+            return; // Detiene la ejecución si las contraseñas no coinciden
+        }
+
+        $.ajax({
+            type: 'GET',
+            url: '@Url.Action("GetJsonUsuariosE")',
+            dataType: 'json',
+            data: { id: $("#Id").val() nombre: $("#Nombre").val(), username: $("#Usuario").val(), IDCertificador: $("#IdCentificador").val() },
+            success: function (obj) {
+                // // document.getElementById("Consecutivo").disabled = true;
+                // $('#Consecutivo').val(obj);
+                if (obj.mensaje !== "") {
+                    alert(obj.mensaje);
+                    event.preventDefault(); // Evita el envío del formulario inicialmente
+                } else {
+                    // Si no hay mensajes, permite el envío del formulario
+                    document.getElementById("miFormulario").submit();
+                }
+
+            },
+            error: function (ex) {
+                //alert('Falle.' + ex.data);
+            }
+
+        });
+
+    }
+</script>
