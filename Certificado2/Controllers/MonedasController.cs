@@ -52,6 +52,19 @@ namespace Certificado2.Controllers
             return pdfResult;
         }
 
+        [HttpGet]
+        public ActionResult Registro()
+        {
+            Moneda moneda= new Moneda();
+            moneda.fecha = DateTime.Now;
+            return View(moneda);
+        }
+
+      
+
+
+
+
     public async Task<FileStreamResult> CreatePdf( string Serie, int Folio)
       {
           

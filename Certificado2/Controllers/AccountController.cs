@@ -23,10 +23,13 @@ namespace Certificado2.Controllers
         // Método para manejar la solicitud de inicio de sesión
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel model)
+
         {
+            model.RememberMe = false;
             if (ModelState.IsValid)
             {
-                var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, lockoutOnFailure: false);
+
+              Microsoft.AspNetCore.Identity.SignInResult result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
                     // Redirigir al usuario a la página de inicio después de iniciar sesión correctamente

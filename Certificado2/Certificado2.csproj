@@ -46,6 +46,13 @@
     <None Include="wwwroot\assets\css\font-awesome\scss\_spinning.scss" />
     <None Include="wwwroot\assets\css\font-awesome\scss\_stacked.scss" />
     <None Include="wwwroot\assets\css\font-awesome\scss\_variables.scss" />
+    <None Include="wwwroot\css\Vanessa\Imagenes\Certificado\Certificados_VEC.pdf" />
+    <None Include="wwwroot\css\Vanessa\Imagenes\Certificado\Certificate_SolidWorks.pdf" />
+    <None Include="wwwroot\css\Vanessa\Imagenes\Certificado\scan0034.pdf" />
+    <None Include="wwwroot\css\Vanessa\Imagenes\Certificado\scan0035.pdf" />
+    <None Include="wwwroot\css\Vanessa\Imagenes\Certificado\scan0036.pdf" />
+    <None Include="wwwroot\css\Vanessa\Imagenes\Certificado\UXUI.pdf" />
+    <None Include="wwwroot\css\Vanessa\Imagenes\Participacion\Certificate for Vanessa Itzel Villar Garca for Constancia de participacin....pdf" />
   </ItemGroup>
 
   <ItemGroup>

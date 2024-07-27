@@ -35,6 +35,7 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
     options.Lockout.AllowedForNewUsers = true;
 
     options.User.RequireUniqueEmail = true;
+   
 })
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders()
@@ -85,7 +86,7 @@ app.UseEndpoints(endpoints =>
         defaults: new { controller = "Certificadores" });
 
     endpoints.MapControllerRoute(
-        name: "account",
+        name: "Account",
         pattern: "Account/{action=Login}",
         defaults: new { controller = "Account" });
 });

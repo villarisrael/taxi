@@ -23,31 +23,31 @@ namespace Certificado2
                 }
             }
 
-            var user = await userManager.FindByEmailAsync("default@certificadodeauntencidad.com");
+            var user = await userManager.FindByEmailAsync("default@certificadodeautenticidad.com");
 
             if (user == null)
             {
                 user = new IdentityUser()
                 {
                     UserName = "default",
-                    Email = "soporte@certificadodeauntencidad.com",
+                    Email = "soporte@certificadodeautenticidad.com",
                 };
                 await userManager.CreateAsync(user, "Vigma@2024*");
             }
-            await userManager.AddToRoleAsync(user, "Admin");
+            await userManager.AddToRoleAsync(user, "User");
 
-            var user2 = await userManager.FindByEmailAsync("default@certificadodeauntencidad.com");
+            var user2 = await userManager.FindByEmailAsync("webmaster@certificadodeautenticidad.com");
 
             if (user2 == null)
             {
                 user2 = new IdentityUser()
                 {
-                    UserName = "default",
-                    Email = "default@certificadodeauntencidad.com",
+                    UserName = "Admin",
+                    Email = "webmaster@certificadodeautenticidad.com",
                 };
                 await userManager.CreateAsync(user2, "Vigma@2024*");
             }
-            await userManager.AddToRoleAsync(user2, "User");
+            await userManager.AddToRoleAsync(user2, "Admin");
         }
     }
 }

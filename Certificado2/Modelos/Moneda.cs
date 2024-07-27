@@ -1,9 +1,12 @@
 ﻿namespace Certificado2.Modelos
 {
+    using Microsoft.EntityFrameworkCore.Metadata.Conventions;
     using System;
+    using System.ComponentModel.DataAnnotations;
 
     public class Moneda
     {
+        [Key]
         public int IdCertificado { get; set; }
         public string Serie { get; set; }
         public int Folio { get; set; }
@@ -15,6 +18,10 @@
         public string Material { get; set; }
         public string Estado { get; set; }
         public byte[] Foto { get; set; }
+
+        public DateTime fecha { get; set; }
+
+
     }
 
 
