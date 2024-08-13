@@ -1,5 +1,6 @@
 using Certificado2;
 using Certificado2.Modelos;
+using Certificado2.Repositorios;
 using Certificado2.Servicios;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -15,8 +16,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddTransient<IRepositorioCertificadores, RepositorioCertificadores>();
 builder.Services.AddTransient<IRepositorioMonedas, RepositorioMonedas>();
-
-
+builder.Services.AddTransient<IRepositorioVJoyeria, RepositorioVJoyeria>();
+builder.Services.AddTransient<IRepositorioVendedor, RepositorioVendedor>();
+builder.Services.AddTransient<IRepositorioArtesania, RepositorioArtesania>();
 
 var connectionString = builder.Configuration.GetConnectionString("ConexionMySql");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -79,6 +81,10 @@ app.UseEndpoints(endpoints =>
     endpoints.MapControllerRoute(
         name: "default",
         pattern: "{controller=Home}/{action=Index}/{id?}");
+
+    endpoints.MapControllerRoute(
+        name: "default",
+        pattern: "{controller=Joyeria}/{action=BuscarCertificado}");
 
     endpoints.MapControllerRoute(
         name: "certificadores",

@@ -55,6 +55,13 @@
                     <input asp-for="RFC" maxlength="13" class="form-control" placeholder="Ingresar RFC" name="RFC" />
                     <span asp-validation-for="RFC" class="text-danger"></span>
                 </div>
+
+
+                            <div class="form-group" style="margin-bottom: 15px;">
+                                <label asp-for="IDVendedor" class="control-label">Vendedor</label>
+                                @Html.DropDownListFor(model => model.IDVendedor, ViewBag.IDVendedor as SelectList, "Seleccione un Vendedor")
+                                <span asp-validation-for="IDVendedor" class="text-danger"></span>
+                            </div>
                 
                 <div class="form-group" style="margin-bottom: 15px;">
                     <label asp-for="Logo1" class="control-label">Logo</label>

@@ -128,51 +128,42 @@
 
                                 </li>
                                 <li class="nav-item">
-                                    <a href="~/Certificadores/Index" class="nav-link">Joyeria</a>
+                                    <a href="~/Joyeria/BuscarCertificado" class="nav-link">Joyeria</a>
 
                                 </li>
                                 <li class="nav-item">
-                                    <a href="~/Certificadores/Index" class="nav-link">Artesania</a>
+                                    <a href="~/Artesania/BuscarCertificado" class="nav-link">Artesania</a>
 
                                 </li>
 
 
                             </ul>
 </li>
-                        @if (User.IsInRole("Admin"))
+                       
+                         @if (!User.IsInRole("Admin"))
+                            {
+                                <li class="nav-item">
+                                    <a href="acercade" class="nav-link">Acerca de</a>
+                                </li>
+                           
+                                <li class="nav-item">
+                                    <a href="precios" class="nav-link dropdown-toggle">Precios</a>
+                            
+                                </li>
+
+                       
+                                <li class="nav-item">
+                                    <a href="contact.html" class="nav-link">Contactanos</a>
+                                </li>
+                            }
+                        @if (User.IsInRole("Certificador"))
                         {
                             <li class="nav-item">
-                                <a href="~/Certificadores/Index" class="nav-link dropdown-toggle">Certificadores</a>
+                                <a href="precios" class="nav-link dropdown-toggle">Comprar </a>
 
                             </li>
                         }
-
-                        <li class="nav-item">
-                            <a href="acercade" class="nav-link">Acerca de</a>
-                        </li>
-
-                        @if (User.IsInRole("Certificador"))
-                            {
-                                <li class="nav-item">
-                                    <a href="precios" class="nav-link dropdown-toggle">Comprar </a>
-
-                                </li>
-                            }
-                            <li class="nav-item">
-                            <a href="precios" class="nav-link dropdown-toggle">Precios</a>
-
-                        </li>
-
                        
-                        <li class="nav-item">
-                            <a href="contact.html" class="nav-link">Contactanos</a>
-                        </li>
-                        @if (!User.IsInRole("Admin") && !User.IsInRole("Certificador"))
-                            {
-                        <li class="nav-item">
-                            <a asp-controller="Account" asp-action="Login" class="nav-link dropdown-toggle">Ingresar</a>
-                        </li>
-                            }
                         @if (User.IsInRole("Certificador"))
                         {
                             <li class="nav-item">
@@ -199,6 +190,9 @@
                         @if (User.IsInRole("Admin"))
                         {
                             <li class="nav-item">
+                                <a asp-controller="Certificadores" asp-action="Index" class="nav-link dropdown-toggle">Certificadores</a>
+                            </li>
+                            <li class="nav-item">
                                 <a href="#" class="nav-link dropdown-toggle">Capturar Certificado <i class="bx bx-chevron-down"></i></a>
                                 <ul class="dropdown-menu">
                                     <li class="nav-item">
@@ -211,12 +205,24 @@
                                         <a asp-controller="Registro" asp-action="ArtesaniaAdmin" class="nav-link dropdown-toggle">Artesania Admin</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a asp-controller="Index2" asp-action="Registro" class="nav-link dropdown-toggle">Lista de Certificados </a>
+                                        <a asp-controller="Registro" asp-action="IndexNumismatica" class="nav-link dropdown-toggle">Certificados Numismatica</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a asp-controller="Registro" asp-action="IndexJoyeria" class="nav-link dropdown-toggle">Certificados Joyeria</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a asp-controller="Registro" asp-action="IndexArtesania" class="nav-link dropdown-toggle">Certificados Artesania</a>
                                     </li>
                                 </ul>
                             </li>
                             <li class="nav-item">
                                 <a asp-controller="Account" asp-action="Logout" class="nav-link dropdown-toggle">Salir</a>
+                            </li>
+                        }
+                        @if (!User.IsInRole("Admin") && !User.IsInRole("Certificador"))
+                        {
+                            <li class="nav-item">
+                                <a asp-controller="Account" asp-action="Login" class="nav-link dropdown-toggle">Ingresar</a>
                             </li>
                         }
                     </ul>

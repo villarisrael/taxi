@@ -1,0 +1,104 @@
+﻿
+@{
+    ViewData["Title"] = "IndexNumismatica";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+@model IEnumerable<Certificado2.Modelos.VMoneda>
+
+@{
+    ViewData["Title"] = "IndexNumismatica";
+    int currentPage = ViewBag.CurrentPage;
+    int totalPages = ViewBag.TotalPages;
+    int pageSize = ViewBag.PageSize;
+}
+
+<div style="padding-top:60px;padding-left:40px">
+<h1>Numismática</h1>
+<form method="get" action="@Url.Action("IndexNumismatica")">
+    <label for="pageSize">Elementos por página:</label>
+    <select id="pageSize" name="pageSize" onchange="this.form.submit()">
+        <option value="5" @(pageSize == 5 ? "selected" : "")>10</option>
+        <option value="10" @(pageSize == 10 ? "selected" : "")>20</option>
+        <option value="20" @(pageSize == 20 ? "selected" : "")>30</option>
+    </select>
+
+   
+        
+    <div class="Buscador">
+
+        <div class="row ">
+            <div class="Columna-input">
+                <p></p>
+                <span id="client-icon" class="icon"><i class="fa fa-user" aria-hidden="true"></i></span>
+                <input class="effect-input" type="text" placeholder="Certificador" id="Certificador" name="Certificador">
+                <span class="focus-border"></span>
+            </div>
+            <div class="Columna-input">
+                <button type="submit" value="Aplicar" class="btn btn-outline-primary">
+                    Buscar  <i class="fa fa-search  " title="Buscar"></i>
+                </button>
+                <span class="sr-only">(current)</span>
+            </div>
+        </div>
+
+    </div>
+
+
+</form>
+
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Razon Social</th>
+            <th>Nombre Responsable</th>
+            <th>Serie</th>
+            <th>Folio</th>
+            <th>Telefono</th>
+            <th>Moneda</th>
+          
+            
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.RazonSocial</td>
+                <td>@item.NombreResponsable</td>
+                <td>@item.Serie</td>
+                <td>@item.Folio</td>
+                <td>@item.Telefono</td>
+                <td>@item.Moneda</td>
+               
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="pagination">
+    @if (currentPage > 1)
+    {
+        <a href="@Url.Action("IndexNumismatica", new { page = currentPage - 1, pageSize })">Anterior</a>
+    }
+
+    @for (int i = 1; i <= totalPages; i++)
+    {
+        if (i == currentPage)
+        {
+            <span>@i</span>
+        }
+        else
+        {
+            <a href="@Url.Action("IndexNumismatica", new { page = i, pageSize })">@i</a>
+        }
+    }
+
+    @if (currentPage < totalPages)
+    {
+        <a href="@Url.Action("IndexNumismatica", new { page = currentPage + 1, pageSize })">Siguiente</a>
+    }
+</div>
+
+</div>

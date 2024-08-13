@@ -7,7 +7,7 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Certificado2.Servicios
 {
-   
+    
 
 
 
@@ -69,7 +69,8 @@ namespace Certificado2.Servicios
                                     EmailFacturacion = reader["Emailfacturacion"] as string,
                                     RFC = reader["RFC"] as string,
                                     Logo = reader["logo"] as byte[],
-                                    Suspendido = (bool)reader["Suspendido"] 
+                                    Suspendido = (bool)reader["Suspendido"] ,
+                                    IDVendedor = (int)reader["IDVendedor"]
                                 };
 
                                 listado.Add(certificador);
@@ -115,7 +116,8 @@ namespace Certificado2.Servicios
                                     EmailFacturacion = reader["Emailfacturacion"] as string,
                                     RFC = reader["RFC"] as string,
                                     Logo = reader["logo"] as byte[],
-                                    Suspendido = (bool)reader["Suspendido"]
+                                    Suspendido = (bool)reader["Suspendido"],
+                                    IDVendedor = (int)reader["IDVendedor"]
                                 };
 
                                 listado.Add(certificador);
@@ -140,7 +142,7 @@ namespace Certificado2.Servicios
                 {
                     await connection.OpenAsync();
 
-                    string insertQuery = "INSERT INTO certificadores (`RazonSocial`, `NombreResponsable`, `Email`, `CP`, `Telefono`, `Emailfacturacion`, `RFC`, Suspendido,`logo`) VALUES " +
+                    string insertQuery = "INSERT INTO certificadores (`RazonSocial`, `NombreResponsable`, `Email`, `CP`, `Telefono`, `Emailfacturacion`, `RFC`, Suspendido,`logo`, IDVendedor) VALUES " +
                                          "(@RazonSocial, @NombreResponsable, @Email, @CP, @Telefono, @Emailfacturacion, @RFC,@Suspendido, @Logo)";
 
                     using (var insertCommand = new MySqlCommand(insertQuery, connection))
@@ -154,6 +156,8 @@ namespace Certificado2.Servicios
                         insertCommand.Parameters.AddWithValue("@RFC", objCertificadores.RFC);
                         insertCommand.Parameters.AddWithValue("@Suspendido", objCertificadores.Suspendido);
                         insertCommand.Parameters.AddWithValue("@Logo", objCertificadores.Logo);
+
+                        insertCommand.Parameters.AddWithValue("@IDVendedor", objCertificadores.IDVendedor);
 
                         await insertCommand.ExecuteNonQueryAsync();
                     }
@@ -174,7 +178,7 @@ namespace Certificado2.Servicios
                 {
                     await connection.OpenAsync();
 
-                    string updateQuery = "UPDATE certificadores SET `RazonSocial` = @RazonSocial, `NombreResponsable` = @NombreResponsable, `Email` = @Email, `CP` = @CP, `Telefono` = @Telefono, `Emailfacturacion` = @Emailfacturacion, `RFC` = @RFC,Suspendido=@Suspendido WHERE `id` = @Id";
+                    string updateQuery = "UPDATE certificadores SET `RazonSocial` = @RazonSocial, `NombreResponsable` = @NombreResponsable, `Email` = @Email, `CP` = @CP, `Telefono` = @Telefono, `Emailfacturacion` = @Emailfacturacion, `RFC` = @RFC,Suspendido=@Suspendido, IDVendedor= @IDVendedor WHERE `id` = @Id";
 
                     using (var updateCommand = new MySqlCommand(updateQuery, connection))
                     {
@@ -186,6 +190,7 @@ namespace Certificado2.Servicios
                         updateCommand.Parameters.AddWithValue("@Emailfacturacion", objCertificadores.EmailFacturacion);
                         updateCommand.Parameters.AddWithValue("@RFC", objCertificadores.RFC);
                         updateCommand.Parameters.AddWithValue("@suspendido", objCertificadores.Suspendido);
+                        updateCommand.Parameters.AddWithValue("@IDVendedor", objCertificadores.IDVendedor);
                         //updateCommand.Parameters.AddWithValue("@Logo", objCertificadores.Logo);
                         updateCommand.Parameters.AddWithValue("@Id", objCertificadores.Id);
 
@@ -209,7 +214,7 @@ namespace Certificado2.Servicios
                 {
                     await connection.OpenAsync();
 
-                    string updateQuery = "UPDATE certificadores SET `RazonSocial` = @RazonSocial, `NombreResponsable` = @NombreResponsable, `Email` = @Email, `CP` = @CP, `Telefono` = @Telefono, `Emailfacturacion` = @Emailfacturacion, `RFC` = @RFC,Suspendido=@Suspendido, `logo` = @Logo WHERE `id` = @Id";
+                    string updateQuery = "UPDATE certificadores SET `RazonSocial` = @RazonSocial, `NombreResponsable` = @NombreResponsable, `Email` = @Email, `CP` = @CP, `Telefono` = @Telefono, `Emailfacturacion` = @Emailfacturacion, `RFC` = @RFC,Suspendido=@Suspendido, `logo` = @Logo, IDVendedor=@IDVendedor WHERE `id` = @Id";
 
                     using (var updateCommand = new MySqlCommand(updateQuery, connection))
                     {
@@ -222,7 +227,9 @@ namespace Certificado2.Servicios
                         updateCommand.Parameters.AddWithValue("@RFC", objCertificadores.RFC);
                         updateCommand.Parameters.AddWithValue("@suspendido", objCertificadores.Suspendido);
                         updateCommand.Parameters.AddWithValue("@Logo", objCertificadores.Logo);
+                        updateCommand.Parameters.AddWithValue("@IDVendedor", objCertificadores.IDVendedor);
                         updateCommand.Parameters.AddWithValue("@Id", objCertificadores.Id);
+
 
                         await updateCommand.ExecuteNonQueryAsync();
                     }
@@ -346,7 +353,8 @@ namespace Certificado2.Servicios
                                     EmailFacturacion = reader["EmailFacturacion"] as string,
                                     RFC = reader["RFC"] as string,
                                     Suspendido = (bool)reader["Suspendido"],
-                                    Logo = reader["Logo"] as byte[]
+                                    Logo = reader["Logo"] as byte[],
+                                    IDVendedor = Convert.ToInt32(reader["IDVendedor"])
                                 };
                             }
                         }
@@ -392,8 +400,8 @@ namespace Certificado2.Servicios
                                 Password = lector["password"] as string,
                                 Email = lector["email"] as string,
                                 WhatsApp = lector["whatsapp"] as string,
-                                IdCentificador = lector["idcentificador"] as int? // Assuming nullable int
-
+                                IdCentificador = lector["idcentificador"] as int?, // Assuming nullable int
+                                
                             };
                             esValido = true;
                         }

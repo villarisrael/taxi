@@ -1,18 +1,13 @@
 ﻿using Certificado2.Modelos;
 using Certificado2.Servicios;
 using Microsoft.AspNetCore.Mvc;
-using iText.Kernel.Pdf;
-using iText.Layout;
-using iText.Layout.Borders;
-using iText.Kernel.Colors;
-using iText.Kernel.Geom;
-using iText.Layout.Properties;
-using iText.Layout.Element;
 
 
 using Document = iText.Layout.Document;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Identity;
+using Certificado2.Repositorios;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Certificado2.Controllers
 {
@@ -20,18 +15,22 @@ namespace Certificado2.Controllers
     public class CertificadoresController : Controller
     {
         private readonly IRepositorioCertificadores _repositorioCertificadores;
-       
-        public CertificadoresController(IRepositorioCertificadores repositorioCertificadores)
+        private readonly IRepositorioVendedor _repositorioVendedores;
+      
+
+        public CertificadoresController(IRepositorioCertificadores repositorioCertificadores, IRepositorioVendedor repositorioVendedor)
         {
             _repositorioCertificadores = repositorioCertificadores;
-       
+            _repositorioVendedores = repositorioVendedor;
+
+
         }
 
 
         //[HttpGet]
         public async Task<IActionResult> Index( string Certificador, int page = 1, int pageSize = 20)
         {
-            IEnumerable<Certificadores> listadoFuentesAbastecimiento = new List<Certificadores>(); ;
+            IEnumerable<Certificadores> listadoFuentesAbastecimiento = new List<Certificadores>(); 
 
             if (Certificador == string.Empty)
             {
@@ -58,6 +57,8 @@ namespace Certificado2.Controllers
             try
             {
                 var certificador = await _repositorioCertificadores.ObtenerDetalleAsync(id);
+                Vendedor vendedor = await _repositorioVendedores.GetVendedorByIdAsync(certificador.IDVendedor);
+                ViewBag.Vendedor = vendedor;
                 return View(certificador);
 
                 
@@ -68,8 +69,12 @@ namespace Certificado2.Controllers
             }
         }
 
-        public IActionResult Crear()
+        public async Task<IActionResult> Crear()
         {
+            var vendedores = await _repositorioVendedores.GetVendedoresForDropdownAsync();
+
+            // Asignar la lista al ViewBag como SelectList
+            ViewBag.IDVendedor = new SelectList(vendedores, "IDVendedor", "Nombre");
             return View();
         }
 
@@ -116,6 +121,11 @@ namespace Certificado2.Controllers
         public async Task<ActionResult> Modificar(int id)
         {
             var certificador =  await _repositorioCertificadores.ObtenerDetalleAsync(id);
+            var vendedores = await _repositorioVendedores.GetVendedoresForDropdownAsync();
+
+            // Asignar la lista al ViewBag como SelectList
+            ViewBag.IDVendedor = new SelectList(vendedores, "IDVendedor", "Nombre", certificador.IDVendedor);
+
             return View(certificador);
         }
 
@@ -123,6 +133,10 @@ namespace Certificado2.Controllers
         [HttpPost]
         public async Task<ActionResult> Modificar(Certificadores certificador)
         {
+            var vendedores = await _repositorioVendedores.GetVendedoresForDropdownAsync();
+
+            // Asignar la lista al ViewBag como SelectList
+            ViewBag.IDVendedor = new SelectList(vendedores, "IDVendedor", "Nombre", certificador.IDVendedor);
             try
             {
                 if (certificador.Logo1 != null)
@@ -166,6 +180,8 @@ namespace Certificado2.Controllers
             }
             return RedirectToAction("ObtenerDetalle", new {id= certificador.Id});
         }
+
+
 
         [HttpPost]
         public async Task<ActionResult> Suspender(int id)

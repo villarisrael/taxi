@@ -19,5 +19,9 @@ namespace Certificado2.Modelos
         public byte[] Logo { get; set; }
         public bool Suspendido { get; set; }
 
+        public int IDVendedor { get; set; }
+
+        public virtual Vendedor Vendedor { get; set; }
+
     }
 }

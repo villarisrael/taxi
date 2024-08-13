@@ -1,0 +1,48 @@
+﻿
+@{
+    ViewData["Title"] = "BuscarCertificado";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+
+
+<!-- User Form Area -->
+<div class="user-form-area">
+    <div class="d-table">
+        <div class="d-table-cell">
+            <div class="container">
+                <div class="user-form-item">
+                    <a class="logo" href="index">
+                        <img src="~/assets/img/FullLogo.jpg" alt="Logo" />
+                    </a>
+                    <form method="post">
+
+                        <div class="form-group">
+
+                            <input type="text" class="form-control" placeholder="Serie" name="Serie" />
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <input type="number" class="form-control" placeholder="Folio" name="Folio" />
+
+                        </div>
+
+                        <div class="text-center">
+
+                            <button type="submit" class="common-btn">
+                                Buscar
+                                <span></span>
+                            </button>
+
+
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End User Form Area -->

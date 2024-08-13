@@ -28,6 +28,31 @@
 
         [StringLength(150)]
         public string Marca { get; set; }
+
+        public DateTime fecha { get; set; }
+        public byte[] Foto { get; set; }
     }
+
+   
+        public class VJoyeria
+        {
+            public int IdCertificado { get; set; }
+            public string RazonSocial { get; set; }
+            public string NombreResponsable { get; set; }
+            public string Telefono { get; set; }
+            public string RFC { get; set; }
+            public string Serie { get; set; }
+            public int Folio { get; set; }
+            public string Objeto { get; set; }
+            public string Material { get; set; }
+            public string Estado { get; set; }
+            public string Marca { get; set; }
+            public string Observacion { get; set; }
+
+              public DateTime fecha { get; set; } 
+        public byte[] Foto { get; set; }    
+        }
+   
+
 
 }

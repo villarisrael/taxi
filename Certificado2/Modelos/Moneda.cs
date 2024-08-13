@@ -27,6 +27,8 @@
 
     public class VMoneda
     {
+        [Key]
+        public int idcertificado { get; set; }
         public string  RazonSocial { get; set; }
      
 

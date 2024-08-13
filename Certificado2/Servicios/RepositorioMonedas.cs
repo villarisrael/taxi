@@ -1,26 +1,24 @@
 ﻿using Certificado2.Modelos;
-using iText.Kernel.Colors;
-using iText.Kernel.Geom;
-using iText.Kernel.Pdf;
-using iText.Layout.Borders;
-using iText.Layout.Element;
-using iText.Layout.Properties;
-using iText.Layout;
-using Microsoft.AspNetCore.Mvc;
+
+
 using MySqlConnector;
-using System.Runtime.ConstrainedExecution;
+
 
 namespace Certificado2.Servicios
 {
-
     public interface IRepositorioMonedas
     {
         Task<VMoneda> ObtenerDatosMoneda(string serie, int folio);
+        Task<IEnumerable<VMoneda>> ObtenerListadoMoneda();
         Task<byte[]> ObtenerLogotipoEmpresaAsync();
+        Task<IEnumerable<VMoneda>> ObtenerListadoMoneda(string certificador);
+
+        Task<IEnumerable<VMoneda>> ObtenerListadoMoneda(string certificador, string moneda);
+
     }
+
     public class RepositorioMonedas : IRepositorioMonedas
     {
-
         private readonly string connectionString;
 
         public RepositorioMonedas(IConfiguration configuration)
@@ -46,7 +44,7 @@ namespace Certificado2.Servicios
                         {
                             if (await reader.ReadAsync())
                             {
-                                logotipo = (byte[])reader["Logo_Empresa"];
+                                logotipo = reader["Logo_Empresa"] as byte[];
                             }
                         }
                     }
@@ -54,6 +52,7 @@ namespace Certificado2.Servicios
             }
             catch (Exception ex)
             {
+                // Loguear el error
                 Console.WriteLine($"Error al obtener el logotipo de la empresa: {ex.Message}");
             }
 
@@ -62,7 +61,55 @@ namespace Certificado2.Servicios
 
         public async Task<VMoneda> ObtenerDatosMoneda(string serie, int folio)
         {
-            Moneda listado = new Moneda();
+            try
+            {
+                using (MySqlConnection connection = new MySqlConnection(connectionString))
+                {
+                    await connection.OpenAsync();
+
+                    string selectQuery = "SELECT * FROM Vmonedas WHERE SERIE = @serie AND FOLIO = @folio";
+
+                    using (var selectCommand = new MySqlCommand(selectQuery, connection))
+                    {
+                        selectCommand.Parameters.AddWithValue("@serie", serie);
+                        selectCommand.Parameters.AddWithValue("@folio", folio);
+
+                        using (var reader = await selectCommand.ExecuteReaderAsync())
+                        {
+                            if (await reader.ReadAsync())
+                            {
+                                return new VMoneda
+                                {
+                                    RazonSocial = reader["RazonSocial"] as string,
+                                    NombreResponsable = reader["NombreResponsable"] as string,
+                                    Serie = reader["Serie"] as string,
+                                    Folio = (int)reader["Folio"],
+                                    Telefono = reader["Telefono"] as string,
+                                    Moneda = reader["Moneda"] as string,
+                                    Ano = reader["Ano"] as string,
+                                    Ceca = reader["Ceca"] as string,
+                                    Material = reader["Material"] as string,
+                                    Estado = reader["Estado"] as string,
+                                    fecha = reader["fecha"] is DBNull ? DateTime.MinValue : (DateTime)reader["fecha"],
+                                    Foto = reader["Foto"] as byte[]
+                                };
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Loguear el error
+                Console.WriteLine($"Error al obtener los datos de la moneda: {ex.Message}");
+            }
+
+            return null;
+        }
+
+        public async Task<IEnumerable<VMoneda>> ObtenerListadoMoneda()
+        {
+            var listado = new List<VMoneda>();
 
             try
             {
@@ -70,45 +117,147 @@ namespace Certificado2.Servicios
                 {
                     await connection.OpenAsync();
 
-                    // Error en esta consulta, no tengo acceso a la BD
-                    string selectQuery = $"SELECT * FROM Vmonedas WHERE SERIE = '{serie}' AND FOLIO = {folio}";
+                    string selectQuery = "SELECT * FROM vmonedas ORDER BY fecha DESC LIMIT 200";
 
                     using (var selectCommand = new MySqlCommand(selectQuery, connection))
                     {
                         using (var reader = await selectCommand.ExecuteReaderAsync())
                         {
-                            reader.ReadAsync();
-                            
-                                VMoneda certificador = new VMoneda
+                            while (await reader.ReadAsync())
+                            {
+                                var moneda = new VMoneda
                                 {
-                                    RazonSocial = (string)reader["RazonSocial"],
-                                    NombreResponsable= (string)reader["NombreResponsable"],
+                                    idcertificado = (int)reader["idcertificado"],
+                                    RazonSocial = reader["RazonSocial"] as string,
+                                    NombreResponsable = reader["NombreResponsable"] as string,
+                                    Telefono = reader["Telefono"] as string,
+                                    RFC = reader["RFC"] as string,
                                     Serie = reader["Serie"] as string,
                                     Folio = (int)reader["Folio"],
-                                 Telefono = reader["Telefono"] as string,
                                     Moneda = reader["Moneda"] as string,
-                                    Ano = (string)reader["ano"],
-                                    Ceca = reader["ceca"] as string,
+                                    Ano = reader["Ano"] as string,
+                                    Ceca = reader["Ceca"] as string,
                                     Material = reader["Material"] as string,
                                     Estado = reader["Estado"] as string,
-                                    fecha = (DateTime) reader["fecha"] ,
+                                    fecha = reader["fecha"] is DBNull ? DateTime.MinValue : (DateTime)reader["fecha"],
                                     Foto = reader["Foto"] as byte[]
                                 };
 
-                            return certificador;
+                                listado.Add(moneda);
+                            }
                         }
-                        
                     }
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error al obtener los datos de la moneda: {ex.Message}");
-                return new VMoneda();
+                // Loguear el error
+                Console.WriteLine($"Error al obtener listado de certificaciones de moneda: {ex.Message}");
             }
 
-           
+            return listado;
         }
 
+        public async Task<IEnumerable<VMoneda>> ObtenerListadoMoneda(string certificador)
+        {
+            var listado = new List<VMoneda>();
+
+            try
+            {
+                using (MySqlConnection connection = new MySqlConnection(connectionString))
+                {
+                    await connection.OpenAsync();
+
+                    string selectQuery = "SELECT * FROM vmonedas  razonsocial like '%"+certificador+ "%' or  razonsocial like '"+certificador+"%' ORDER BY fecha DESC LIMIT 200";
+
+                    using (var selectCommand = new MySqlCommand(selectQuery, connection))
+                    {
+                        using (var reader = await selectCommand.ExecuteReaderAsync())
+                        {
+                            while (await reader.ReadAsync())
+                            {
+                                var moneda = new VMoneda
+                                {
+                                    idcertificado = (int)reader["idcertificado"],
+                                    RazonSocial = reader["RazonSocial"] as string,
+                                    NombreResponsable = reader["NombreResponsable"] as string,
+                                    Telefono = reader["Telefono"] as string,
+                                    RFC = reader["RFC"] as string,
+                                    Serie = reader["Serie"] as string,
+                                    Folio = (int)reader["Folio"],
+                                    Moneda = reader["Moneda"] as string,
+                                    Ano = reader["Ano"] as string,
+                                    Ceca = reader["Ceca"] as string,
+                                    Material = reader["Material"] as string,
+                                    Estado = reader["Estado"] as string,
+                                    fecha = reader["fecha"] is DBNull ? DateTime.MinValue : (DateTime)reader["fecha"],
+                                    Foto = reader["Foto"] as byte[]
+                                };
+
+                                listado.Add(moneda);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Loguear el error
+                Console.WriteLine($"Error al obtener listado de certificaciones de moneda: {ex.Message}");
+            }
+
+            return listado;
+        }
+
+        public async Task<IEnumerable<VMoneda>> ObtenerListadoMoneda(string certificador, string moneda)
+        {
+            var listado = new List<VMoneda>();
+
+            try
+            {
+                using (MySqlConnection connection = new MySqlConnection(connectionString))
+                {
+                    await connection.OpenAsync();
+
+                    string selectQuery = "SELECT * FROM vmonedas  razonsocial like '%" + certificador + "%' or  razonsocial like '" + certificador + "%' or moneda like '" +moneda+ "%' or moneda like '%" +moneda+ "%'   ORDER BY fecha DESC LIMIT 200";
+
+                    using (var selectCommand = new MySqlCommand(selectQuery, connection))
+                    {
+                        using (var reader = await selectCommand.ExecuteReaderAsync())
+                        {
+                            while (await reader.ReadAsync())
+                            {
+                                var vmoneda = new VMoneda
+                                {
+                                    idcertificado = (int)reader["idcertificado"],
+                                    RazonSocial = reader["RazonSocial"] as string,
+                                    NombreResponsable = reader["NombreResponsable"] as string,
+                                    Telefono = reader["Telefono"] as string,
+                                    RFC = reader["RFC"] as string,
+                                    Serie = reader["Serie"] as string,
+                                    Folio = (int)reader["Folio"],
+                                    Moneda = reader["Moneda"] as string,
+                                    Ano = reader["Ano"] as string,
+                                    Ceca = reader["Ceca"] as string,
+                                    Material = reader["Material"] as string,
+                                    Estado = reader["Estado"] as string,
+                                    fecha = reader["fecha"] is DBNull ? DateTime.MinValue : (DateTime)reader["fecha"],
+                                    Foto = reader["Foto"] as byte[]
+                                };
+
+                                listado.Add(vmoneda);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Loguear el error
+                Console.WriteLine($"Error al obtener listado de certificaciones de moneda: {ex.Message}");
+            }
+
+            return listado;
+        }
     }
 }

@@ -52,13 +52,13 @@ namespace Certificado2.Controllers
             return pdfResult;
         }
 
-        [HttpGet]
-        public ActionResult Registro()
-        {
-            Moneda moneda= new Moneda();
-            moneda.fecha = DateTime.Now;
-            return View(moneda);
-        }
+        //[HttpGet]
+        //public ActionResult Registro()
+        //{
+        //    Moneda moneda= new Moneda();
+        //    moneda.fecha = DateTime.Now;
+        //    return View(moneda);
+        //}
 
       
 
@@ -240,11 +240,12 @@ namespace Certificado2.Controllers
             bytesStream = ms.ToArray();
         }
 
-        MemoryStream finalMs = new MemoryStream(bytesStream);
-        finalMs.Position = 0;
-
-        return new FileStreamResult(finalMs, "application/pdf");
-    }
+            var stream = new MemoryStream(bytesStream);
+            return new FileStreamResult(stream, "application/pdf")
+            {
+                FileDownloadName = $"Numismatica_{datosMoneda.Serie.ToUpper()}_{datosMoneda.Folio.ToString()}.pdf"
+            };
+        }
 
 
 }
