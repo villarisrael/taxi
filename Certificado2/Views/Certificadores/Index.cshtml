@@ -228,7 +228,7 @@
                                             <div>
                                                 <a href="javascript:void(0);" onclick="event.preventDefault(); document.getElementById('suspender-form-@certificador.Id').submit();" class="nav-link btn-danger">Suspender</a>
                                                 <form id="suspender-form-@certificador.Id" action="~/Certificadores/Suspender" method="post" style="display: none;">
-                                                    <input type="hidden" name="id" value="@certificador.Id">
+                                                    <input type="hidden" name="certificadorId" value="@certificador.Id">
                                                 </form>
 
                                             </div>
@@ -243,6 +243,14 @@
 
                                             </div>
                                         }
+                                        <div>
+                                            <div>
+                                                <a href="@Url.Action("FoliosDisponibles", "CertificadoresFolios", new { IDCertificador = certificador.Id })" class="nav-link btn-success">Ver Folios Disponibles</a>
+                                            </div>
+
+
+                                        </div>
+
                                     </td>
                                     
                                       

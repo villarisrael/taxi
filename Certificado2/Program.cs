@@ -19,6 +19,9 @@ builder.Services.AddTransient<IRepositorioMonedas, RepositorioMonedas>();
 builder.Services.AddTransient<IRepositorioVJoyeria, RepositorioVJoyeria>();
 builder.Services.AddTransient<IRepositorioVendedor, RepositorioVendedor>();
 builder.Services.AddTransient<IRepositorioArtesania, RepositorioArtesania>();
+builder.Services.AddTransient<IFoliosRepository, FoliosRepository>();
+builder.Services.AddTransient<ICertificadoresFoliosRepository, CertificadoresFoliosRepository>();
+
 
 var connectionString = builder.Configuration.GetConnectionString("ConexionMySql");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
