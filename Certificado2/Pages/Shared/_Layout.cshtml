@@ -90,7 +90,9 @@
                         @{
                             string usuario = string.Empty;
                             if (User.IsInRole("Admin") || User.IsInRole("Certificador"))
-                            { usuario = "Hola, " + User.Identity.Name; }
+                            { usuario = "Hola, " + User.Identity.Name;
+                            
+                            }
                         }
                         @usuario
                     </div>

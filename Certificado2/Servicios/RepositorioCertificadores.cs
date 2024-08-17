@@ -22,12 +22,9 @@ namespace Certificado2.Servicios
         Task ActivarCertificador(int id);
         Task<Certificadores> ObtenerDetalleAsync(int idCertificadores);
         Task EliminarAsync(int id);
-        Task<bool> ValidarCredenciales(string usuario, string password);
-        Task<IEnumerable<UsuCertificadores>> ObtenerListadoUsuarios(int _Certificador, string Usuario);
-        Task AgregarUsuario(UsuCertificadores usuarios);
-        Task<UsuCertificadores> ObtenerDetalleUsuario(int idCertificadores);
-
-        Task ModificarUsuario(UsuCertificadores objFuentesAbastecimiento);
+       
+        Task<IEnumerable<UsuarioCertificados>> ObtenerListadoUsuarios(int _Certificador, string Usuario);
+        Task<UsuarioCertificados> ObtenerDetalleUsuario(int id);
     }
 
     public class RepositorioCertificadores: IRepositorioCertificadores
@@ -50,7 +47,7 @@ namespace Certificado2.Servicios
                 {
                     await connection.OpenAsync();
 
-                    string selectQuery = "SELECT * FROM certificadores";
+                    string selectQuery = "SELECT * FROM certificadores order by RazonSocial";
 
                     using (var selectCommand = new MySqlCommand(selectQuery, connection))
                     {
@@ -97,7 +94,7 @@ namespace Certificado2.Servicios
                 {
                     await connection.OpenAsync();
 
-                    string selectQuery = "SELECT * FROM certificadores where  RazonSocial like '%" + _certificador + "%' or  RazonSocial like '" + _certificador + "%' or  NombreResponsable like '%"+ _certificador+ "%'  or  NombreResponsable like '"+ _certificador+ "%' " ;
+                    string selectQuery = "SELECT * FROM certificadores where  RazonSocial like '%" + _certificador + "%' or  RazonSocial like '" + _certificador + "%' or  NombreResponsable like '%"+ _certificador+ "%'  or  NombreResponsable like '"+ _certificador+ "%' order by RazonSocial " ;
 
                     using (var selectCommand = new MySqlCommand(selectQuery, connection))
                     {
@@ -249,7 +246,7 @@ namespace Certificado2.Servicios
                 {
                     await connection.OpenAsync();
 
-                    string updateQuery = "UPDATE certificadores SET `Suspendido` = @Suspendido WHERE `id` = @Id";
+                    string updateQuery = "UPDATE certificadores SET Suspendido = @Suspendido WHERE id = @Id";
 
                     using (var updateCommand = new MySqlCommand(updateQuery, connection))
                     {
@@ -369,66 +366,11 @@ namespace Certificado2.Servicios
             return certificadores;
         }
 
-        public async Task<bool> ValidarCredenciales(string usuario, string password)
+      
+
+        public async Task<IEnumerable<UsuarioCertificados>> ObtenerListadoUsuarios(int _certificador, string U)
         {
-
-
-            bool esValido = false;
-            UsuCertificadores certificador = null;
-
-            // Consulta SQL para verificar las credenciales
-            string consulta = "SELECT * FROM usucertificadores WHERE  Usuario = @Usuario AND Password = @Contraseña";
-
-            using (MySqlConnection conexion = new MySqlConnection(connectionString))
-            {
-                MySqlCommand comando = new MySqlCommand(consulta, conexion);
-                conexion.Open();
-                comando.Parameters.AddWithValue("@Usuario", usuario);
-                comando.Parameters.AddWithValue("@Contraseña", password);
-
-                try
-                {
-                    using (var lector = await comando.ExecuteReaderAsync())
-                    {
-                        if (await lector.ReadAsync())
-                        {
-                            certificador = new UsuCertificadores
-                            {
-                                Id = Convert.ToInt32(lector["idusucertificadores"]),
-                                Nombre = lector["Nombre"] as string,
-                                Usuario = lector["usuario"] as string,
-                                Password = lector["password"] as string,
-                                Email = lector["email"] as string,
-                                WhatsApp = lector["whatsapp"] as string,
-                                IdCentificador = lector["idcentificador"] as int?, // Assuming nullable int
-                                
-                            };
-                            esValido = true;
-                        }
-                    }
-
-                    if (esValido)
-                    {
-                        // Si las credenciales son válidas, establecer la identidad y el usuario autenticado
-                        
-
-
-                    }
-                }
-                catch (Exception ex)
-                {
-                    // Manejar excepción
-                    Console.WriteLine("Error al verificar las credenciales: " + ex.Message);
-                }
-            }
-
-            return esValido;
-        }
-
-
-        public async Task<IEnumerable<UsuCertificadores>> ObtenerListadoUsuarios(int _certificador, string U)
-        {
-            List<UsuCertificadores> listado = new List<UsuCertificadores>();
+            List<UsuarioCertificados> listado = new List<UsuarioCertificados>();
 
             try
             {
@@ -436,10 +378,10 @@ namespace Certificado2.Servicios
                 {
                     await connection.OpenAsync();
 
-                    string selectQuery = "SELECT * FROM UsuCertificadores where  idcentificador=" + _certificador;
+                    string selectQuery = "SELECT * FROM aspnetusers where  idcertificador=" + _certificador;
                     if (U!="")
                     {
-                        selectQuery = "SELECT * FROM UsuCertificadores where  idcentificador=" + _certificador + " and nombre like '%"+U+"%'";
+                        selectQuery = "SELECT * FROM UsuCertificadores where  idcertificador=" + _certificador + " and NombreCompleto like '%"+U+"%'";
                     }
                    
                     using (var selectCommand = new MySqlCommand(selectQuery, connection))
@@ -448,15 +390,16 @@ namespace Certificado2.Servicios
                         {
                             while (await reader.ReadAsync())
                             {
-                                UsuCertificadores certificador = new UsuCertificadores
+                                UsuarioCertificados certificador = new UsuarioCertificados
                                 {
-                                    Id = (int)reader["idusucertificadores"],
-                                    Nombre = reader["Nombre"] as string,
-                                    Usuario = reader["usuario"] as string,
-                                    Password = reader["password"] as string,
-                                    Email = reader["email"] as string,
-                                    WhatsApp = reader["whatsapp"] as string,
-                                    IdCentificador = (int)reader["idcentificador"]
+                                    Id = reader["Id"] as string,
+                                    idcertificador = (int)reader["idcertificador"],
+                                    NombreCompleto = reader["NombreCompleto"] as string,
+                                    UserName = reader["UserName"] as string,
+                                  
+                                    Email = reader["Email"] as string,
+                                    PhoneNumber = reader["PhoneNumber"] as string,
+                                 
 
                                 };
 
@@ -473,40 +416,12 @@ namespace Certificado2.Servicios
 
             return listado;
         }
-        public async Task AgregarUsuario(UsuCertificadores _Usuarios)
+
+
+        public async Task<UsuarioCertificados> ObtenerDetalleUsuario(int id)
         {
-            try
-            {
-                using (MySqlConnection connection = new MySqlConnection(connectionString))
-                {
-                    await connection.OpenAsync();
-
-                    string insertQuery = "INSERT INTO UsuCertificadores (`Nombre`, `usuario`, `password`, `email`, `whatsapp`, `idcentificador`) VALUES " +
-                                         "(@Nombre, @usuario, @password, @email, @whatsapp, @idcentificador)";
-
-                    using (var insertCommand = new MySqlCommand(insertQuery, connection))
-                    {
-                        insertCommand.Parameters.AddWithValue("@Nombre", _Usuarios.Nombre);
-                        insertCommand.Parameters.AddWithValue("@usuario", _Usuarios.Usuario);
-                        insertCommand.Parameters.AddWithValue("@password", _Usuarios.Password);
-                        insertCommand.Parameters.AddWithValue("@email", _Usuarios.Email);
-                        insertCommand.Parameters.AddWithValue("@whatsapp", _Usuarios.WhatsApp);
-                        insertCommand.Parameters.AddWithValue("@idcentificador", _Usuarios.IdCentificador);
-                       
-
-                        await insertCommand.ExecuteNonQueryAsync();
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error al agregar usuario: {ex.Message}");
-            }
-        }
-
-        public async Task<UsuCertificadores> ObtenerDetalleUsuario(int id)
-        {
-            UsuCertificadores certificadores = null;
+            // Busca el usuario en la base de datos por su ID
+            UsuarioCertificados usuario = new UsuarioCertificados();
 
             try
             {
@@ -514,68 +429,37 @@ namespace Certificado2.Servicios
                 {
                     await connection.OpenAsync();
 
-                    string selectQuery = "SELECT * FROM UsuCertificadores WHERE idusucertificadores = @idusucertificadores";
+                    string selectQuery = "SELECT * FROM aspnetusers where  idcentificador=" + id;
 
                     using (var selectCommand = new MySqlCommand(selectQuery, connection))
                     {
-                        selectCommand.Parameters.AddWithValue("@idusucertificadores", id);
-
                         using (var reader = await selectCommand.ExecuteReaderAsync())
                         {
-                            if (await reader.ReadAsync())
+                            while (await reader.ReadAsync())
                             {
-                                certificadores = new UsuCertificadores
+                                 usuario = new UsuarioCertificados
                                 {
-                                    Id = (int)reader["idusucertificadores"],
-                                    Nombre = reader["Nombre"] as string,
-                                    Usuario = reader["usuario"] as string,
-                                    Password = reader["password"] as string,
-                                    Email = reader["email"] as string,
-                                    WhatsApp = reader["whatsapp"] as string,
-                                    IdCentificador = (int)reader["idcentificador"]
+                                    Id = reader["Id"] as string,
+                                    idcertificador = reader["idcertificador"] != DBNull.Value ? Convert.ToInt32(reader["idcertificador"]) : 0,
+                                    NombreCompleto = reader["NombreCompleto"] as string,
+                                    UserName = reader["usuario"] as string,
+                                    NormalizedUserName = reader["NormalizedUserName"] as string,
+                                    Email = reader["Email"] as string,
+                                    EmailConfirmed = reader["EmailConfirmed"] != DBNull.Value ? Convert.ToBoolean(reader["EmailConfirmed"]) : false,
+                                    PhoneNumber = reader["PhoneNumber"] as string,
+                                    PhoneNumberConfirmed = reader["PhoneNumberConfirmed"] != DBNull.Value ? Convert.ToBoolean(reader["PhoneNumberConfirmed"]) : false,
+                                    TwoFactorEnabled = reader["TwoFactorEnabled"] != DBNull.Value ? Convert.ToBoolean(reader["TwoFactorEnabled"]) : false
                                 };
+
+
+
                             }
                         }
                     }
+                    return usuario;
                 }
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error al obtener detalle de certificador: {ex.Message}");
-            }
-
-            return certificadores;
+            catch (Exception ex) { return usuario; }
         }
-        public async Task ModificarUsuario(UsuCertificadores objCertificadores)
-        {
-            try
-            {
-                using (MySqlConnection connection = new MySqlConnection(connectionString))
-                {
-                    await connection.OpenAsync();
-
-                    string updateQuery = "UPDATE UsuCertificadores SET  `Nombre` = @Nombre, `usuario` = @usuario, `password` = @password, `email` = @email, `whatsapp` = @whatsapp, `idcentificador` = @idcentificador WHERE `idusucertificadores` = @Id";
-
-                    using (var updateCommand = new MySqlCommand(updateQuery, connection))
-                    {
-                        updateCommand.Parameters.AddWithValue("@Nombre", objCertificadores.Nombre);
-                        updateCommand.Parameters.AddWithValue("@usuario", objCertificadores.Usuario);
-                        updateCommand.Parameters.AddWithValue("@password", objCertificadores.Password);
-                        updateCommand.Parameters.AddWithValue("@email", objCertificadores.Email);
-                        updateCommand.Parameters.AddWithValue("@whatsapp", objCertificadores.WhatsApp);
-                        updateCommand.Parameters.AddWithValue("@idcentificador", objCertificadores.IdCentificador);
-                       
-                        updateCommand.Parameters.AddWithValue("@idusucertificadores", objCertificadores.Id);
-
-                        await updateCommand.ExecuteNonQueryAsync();
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error al actualizar usuario: {ex.Message}");
-            }
-        }
-
     }
 }

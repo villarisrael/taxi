@@ -13,6 +13,8 @@ namespace Certificado2.Modelos
 
         [Display(Name = "Recordarme")]
         public bool RememberMe { get; set; }
+
+    
     }
 
 }

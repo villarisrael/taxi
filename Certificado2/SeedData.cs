@@ -7,7 +7,7 @@ namespace Certificado2
 {
     public static class SeedData
     {
-        public static async Task Initialize(IServiceProvider serviceProvider, UserManager<IdentityUser> userManager)
+        public static async Task Initialize(IServiceProvider serviceProvider, UserManager<UsuarioCertificados> userManager)
         {
             var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
@@ -27,10 +27,12 @@ namespace Certificado2
 
             if (user == null)
             {
-                user = new IdentityUser()
+                user = new UsuarioCertificados()
                 {
                     UserName = "default",
                     Email = "soporte@certificadodeautenticidad.com",
+                    NombreCompleto= "default"
+
                 };
                 await userManager.CreateAsync(user, "Vigma@2024*");
             }
@@ -40,10 +42,11 @@ namespace Certificado2
 
             if (user2 == null)
             {
-                user2 = new IdentityUser()
+                user2 = new UsuarioCertificados()
                 {
                     UserName = "Admin",
                     Email = "webmaster@certificadodeautenticidad.com",
+                    NombreCompleto ="ISRAEL VILLAR MEDINA"
                 };
                 await userManager.CreateAsync(user2, "Vigma@2024*");
             }

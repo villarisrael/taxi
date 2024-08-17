@@ -10,7 +10,7 @@
 
   
 
-    <div class="register_wrap section_padding_b">
+    <div class="register_wrap section_padding_b" style="padding-top:60px">
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-xl-5 col-lg-7 col-md-9">
@@ -59,7 +59,7 @@
 
                             <div class="form-group" style="margin-bottom: 15px;">
                                 <label asp-for="IDVendedor" class="control-label">Vendedor</label>
-                                @Html.DropDownListFor(model => model.IDVendedor, ViewBag.IDVendedor as SelectList, "Seleccione un Vendedor")
+                                @Html.DropDownListFor(model => model.IDVendedor, ViewBag.IDVendedor as SelectList, "Seleccione un Vendedor", new{ @class="form-control"})
                                 <span asp-validation-for="IDVendedor" class="text-danger"></span>
                             </div>
                 

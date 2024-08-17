@@ -3,65 +3,57 @@
     ViewData["Title"] = "Ingresar";
     Layout = "_Layout";
 }
-
-<div class="register_wrap section_padding_b" style="margin-top:110px">
+<div class="register_wrap section_padding_b mt-5">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-xl-5 col-lg-7 col-md-9">
-                <!-- login box  -->
-                <div class="register_form padding_default shadow_sm">
-                    <h4 class="title_2">Ingreso del Certificador</h4>
-            
-                    <!-- input form  -->
+                <!-- login box -->
+                <div class="register_form p-4 shadow-sm rounded">
+                    <h4 class="mb-4">Ingreso del Certificador</h4>
+
+                    <!-- input form -->
                     <form asp-action="Login" method="post">
-                        <div class="row">
-                            <input type="hidden" value="Certificador" name="Rol" id="Rol" />
-                            <!-- single input  -->
-                            <div class="col-12">
-                                <div class="single_billing_inp">
-                                    <label>Usuario <span>*</span></label>
-                                    <input type="text" placeholder="Escribe el usuario" name="UserName">
-                                </div>
-                            </div>
-                            <!-- single input  -->
-                            <div class="col-12">
-                                <div class="single_billing_inp">
-                                    <label>Password <span>*</span></label>
-                                    <input type="password" placeholder="Contraseña" name="Password">
-                                </div>
-                            </div>
-                            <!-- remember me  -->
-                            <div class="col-12 mt-2 d-flex justify-content-between align-items-center">
-                                <!-- checkbox  -->
-                                <div class="custom_check check_2 d-flex align-items-center">
-                                    <input type="checkbox" class="check_inp" hidden id="save-default" name="RememberMe">
-                                    <label for="save-default">Recuerdame</label>
-                                </div>
+                        <input type="hidden" value="Certificador" name="Rol" id="Rol" />
 
-                                <a href="forgot-password.html" class="text-color">Lo olvidaste?</a>
-                            </div>
-
-                        
-                            <!-- button  -->
-                            <div class="col-12 mt-3">
-                                <button type="submit" class="default_btn xs_btn rounded px-4 d-block w-100">Ingresar</button>
-                            </div>
-
+                        <div class="mb-3">
+                            <label for="UserName" class="form-label">Usuario <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="UserName" name="UserName" placeholder="Escribe el usuario" required>
                         </div>
-                    </form>
-                    <div>
-                        <p style="color:red"> @ViewBag.Mensaje</p>
-                    </div>
 
-                    <div class="text-center mt-3 mb-0">
+                        <div class="mb-3">
+                            <label for="Password" class="form-label">Password <span class="text-danger">*</span></label>
+                            <input type="password" class="form-control" id="Password" name="Password" placeholder="Contraseña" required>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <!-- remember me -->
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="RememberMe" name="RememberMe">
+                                <label class="form-check-label" for="RememberMe">Recuérdame</label>
+                            </div>
+                            <a href="forgot-password.html" class="text-decoration-none">¿Olvidaste tu contraseña?</a>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 rounded-pill">Ingresar</button>
+                    </form>
+
+                    <!-- error message -->
+                    @if (!string.IsNullOrEmpty(ViewBag.Mensaje))
+                    {
+                        <div class="alert alert-danger mt-3" role="alert">
+                            @ViewBag.Mensaje
+                        </div>
+                    }
+
+                    <div class="text-center mt-3">
                         <p>
-                            No tienes cuenta?
-                            <button type="button" class="btn btn-link text-color" onclick="location.href='~/certificadores/Crear2'">Crea una como Certificador</button>
+                            ¿No tienes cuenta?
+                            <button type="button" class="btn btn-link text-primary p-0" onclick="location.href='~/certificadores/Crear2'">Crea una como Certificador</button>
                         </p>
                     </div>
-
                 </div>
             </div>
         </div>
     </div>
 </div>
+

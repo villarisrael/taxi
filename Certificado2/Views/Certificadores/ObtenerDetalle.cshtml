@@ -1,99 +1,83 @@
-﻿<div style="margin-left:10px;margin-right:10px">
-    @model Certificado2.Modelos.Certificadores
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model Certificado2.Modelos.Certificadores
 
+@{
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
 
-    @{
-        ViewData["Title"] = "Detalles";
-        Layout = "_Layout";
-    }
+<div class="container mt-5">
+    <div class="row">
+        <!-- Panel principal del certificador -->
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4>Detalles del Certificador</h4>
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-3">Razón Social:</dt>
+                        <dd class="col-sm-9">@Model.RazonSocial</dd>
 
-    <h1>Detalles</h1>
+                        <dt class="col-sm-3">Nombre Responsable:</dt>
+                        <dd class="col-sm-9">@Model.NombreResponsable</dd>
 
-    <div>
-        <h4>Ruta</h4>
-        <hr />
-        <dl class="row" style="margin-bottom: 15px;">
-           
-          
-            <dt class="col-sm-2">
-                @Html.Label("Razón social")
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.RazonSocial)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.Label("Responsable")
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.NombreResponsable)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.Label("E-mail")
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Email)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.Label("CP")
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.CP)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.Label("Teléfono")
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Telefono)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.Label("E-mail facturación")
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.EmailFacturacion)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.Label("RFC")
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.RFC)
-            </dd>
+                        <dt class="col-sm-3">Email:</dt>
+                        <dd class="col-sm-9">@Model.Email</dd>
 
-            <dt class="col-sm-2">
-                @Html.Label("Vendedor")
-            </dt>
-            <dd class="col-sm-10">
-                @ViewBag.Vendedor.Nombre
-            </dd>
+                        <dt class="col-sm-3">Teléfono:</dt>
+                        <dd class="col-sm-9">@Model.Telefono</dd>
 
+                        <dt class="col-sm-3">Logo:</dt>
+                        <dd class="col-sm-9">
+                            @if (Model.Logo != null)
+                            {
+                                
+                                    string imagen = Convert.ToBase64String(Model.Logo);
+                                
+                                <img src="data:image/jpeg;base64,@imagen" alt="Logo" class="img-fluid" style="max-width: 200px;" />
+                            }
+                            else
+                            {
+                                <p>No disponible</p>
+                            }
+                        </dd>
 
-            <dt class="col-sm-2">
-                @Html.Label("Logo")
-            </dt>
-            <dd class="col-sm-10">
-                @{
-                    try
-                    {
-                        string imagen = Convert.ToBase64String(Model.Logo);
+                        <dt class="col-sm-3">Suspendido:</dt>
+                        <dd class="col-sm-9">@((Model.Suspendido) ? "Sí" : "No")</dd>
+                    </dl>
+                </div>
+                <div class="card-footer text-end">
+                    <a href="@Url.Action("Modificar", new { id = Model.Id })" class="btn btn-warning">Editar</a>
+                    <a href="@Url.Action("Index")" class="btn btn-secondary">Volver</a>
+                </div>
+            </div>
+        </div>
 
-                        <img src="data:image/jpeg;base64,@imagen" alt="Logo" width="100" />
-                    }
-                    catch (Exception ewr)
-                    {
-                        <img src="data:image/jpeg;base64,null" alt="Logo" width="100" />
-                    }
-                }
-            </dd>
-        </dl>
-    </div>
-    <br>
-    <div style="margin-bottom: 15px;">
-        <form action="~/Certificadores/Modificar" method="get">
-            <input type="hidden" name="id" value="@Model.Id">
-            <button type="submit" class="nav-link">Editar</button>
-        </form>
-        <button type="button" class="btn btn-outline-secondary" onclick="location.href='@Url.Action("Index", "Certificadores")'">Regresar a la lista</button>
+        <!-- Panel del vendedor asociado -->
+        @if (ViewBag.Vendedor != null)
+        {
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        <h4>Vendedor Asociado</h4>
+                    </div>
+                    <div class="card-body">
+                        <dl class="row">
+                            <dt class="col-sm-4">Nombre:</dt>
+                            <dd class="col-sm-8">@ViewBag.Vendedor.Nombre</dd>
+
+                          
+                            <dt class="col-sm-4">Teléfono:</dt>
+                            <dd class="col-sm-8">@ViewBag.Vendedor.Telefono</dd>
+                        </dl>
+                    </div>
+                   
+                </div>
+            </div>
+        }
     </div>
 </div>
-
-
-

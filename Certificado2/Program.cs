@@ -5,7 +5,7 @@ using Certificado2.Servicios;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using static Certificado2.Modelos.RepositorioUsuCertificadores;
+
 
 
 
@@ -21,13 +21,14 @@ builder.Services.AddTransient<IRepositorioVendedor, RepositorioVendedor>();
 builder.Services.AddTransient<IRepositorioArtesania, RepositorioArtesania>();
 builder.Services.AddTransient<IFoliosRepository, FoliosRepository>();
 builder.Services.AddTransient<ICertificadoresFoliosRepository, CertificadoresFoliosRepository>();
+builder.Services.AddTransient<IUsuarioRepository, UsuarioRepository>();
 
 
 var connectionString = builder.Configuration.GetConnectionString("ConexionMySql");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
-builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
+builder.Services.AddIdentity<UsuarioCertificados, IdentityRole>(options =>
 {
     options.Password.RequireDigit = true;
     options.Password.RequiredLength = 8;
@@ -35,16 +36,17 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
     options.Password.RequireUppercase = false;
     options.Password.RequireLowercase = true;
 
-    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
     options.Lockout.MaxFailedAccessAttempts = 5;
     options.Lockout.AllowedForNewUsers = true;
+    
 
-    options.User.RequireUniqueEmail = true;
+    options.User.RequireUniqueEmail = false;
    
 })
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders()
-.AddSignInManager<SignInManager<IdentityUser>>();
+.AddSignInManager<SignInManager<UsuarioCertificados>>();
 
 
 
@@ -73,7 +75,7 @@ app.MapRazorPages();
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
-    var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
+    var userManager = services.GetRequiredService<UserManager<UsuarioCertificados>>();
     SeedData.Initialize(services, userManager).Wait();
 }
 
