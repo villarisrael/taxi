@@ -1,10 +1,12 @@
 ﻿using Certificado2.Modelos;
 using Certificado2.Servicios;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Certificado2.Controllers
@@ -12,20 +14,75 @@ namespace Certificado2.Controllers
     public class RegistroController : Controller
     {
         private readonly IRepositorioMonedas repositorioMonedas;
+        private readonly UserManager<UsuarioCertificados> _userManager;
+        private readonly IFoliosRepository _repositoriofolios;
 
-        public RegistroController(IRepositorioMonedas _repositorioMonedas)
+        public RegistroController(IRepositorioMonedas _repositorioMonedas, UserManager<UsuarioCertificados> userManager, IFoliosRepository repositoriofolios)
         {
             repositorioMonedas = _repositorioMonedas;
+            _userManager = userManager;
+            _repositoriofolios = repositoriofolios; 
+
         }
 
         [HttpGet]
-        public IActionResult Numismatica()
+      
+        public async Task<IActionResult> CrearCertificadoMonedas()
         {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            // Obtener el objeto completo del usuario autenticado
+            var usuario = await _userManager.FindByIdAsync(userId);
+
+
             Moneda moneda = new Moneda
             {
                 fecha = DateTime.Now,
-                IdCertificador = 1
+                IdCertificador = usuario.idcertificador
             };
+            ViewBag.Certificador = usuario.NombreCompleto;
+            return View(moneda);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CrearCertificadoMonedas(Moneda moneda, IFormFile Foto)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            // Obtener el objeto completo del usuario autenticado
+            var usuario = await _userManager.FindByIdAsync(userId);
+
+            moneda.fecha = DateTime.Now;
+            moneda.idusucer = usuario.Id;
+            moneda.IdCertificador = usuario.idcertificador;
+
+            FolioSiguiente FOLIOS = await _repositoriofolios.GetFolioMonedaAsync();
+
+            moneda.Serie = FOLIOS.Serie;
+            moneda.Folio = FOLIOS.Folio;
+
+            if (Foto != null && Foto.Length > 0)
+            {
+                using (var memoryStream = new MemoryStream())
+                {
+                    await Foto.CopyToAsync(memoryStream);
+                    moneda.Foto = memoryStream.ToArray();
+                }
+            }
+
+           
+                int nuevoId = await repositorioMonedas.CrearCertificado(moneda);
+                if (nuevoId > 0)
+                {
+                    // Certificado creado exitosamente
+                    return RedirectToAction("Numismatica");
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Error al crear el certificado.");
+                }
+            
+
             return View(moneda);
         }
 

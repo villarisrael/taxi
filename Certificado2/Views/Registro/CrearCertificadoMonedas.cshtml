@@ -1,0 +1,87 @@
+﻿@model Certificado2.Modelos.Moneda
+
+@{
+    ViewBag.Title = "Crear Certificado Monedas";
+    Layout = "_Layout";
+}
+
+<div class="container mt-5" style="padding:40px;padding-bottom:40px">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white text-center">
+                    <h4>Crear Certificado de @ViewBag.Certificador</h4>
+                </div>
+                <div class="card-body">
+                    <form asp-action="CrearCertificado" method="post" enctype="multipart/form-data">
+                        
+
+                      
+
+                        <input name="IdCertificador" value="IdCertificador" id="IdCertificador" type="hidden" />
+
+                      
+
+
+                        <div class="mb-3">
+                            <label asp-for="Nombre" class="form-label">Descripcion de Moneda o Billete</label>
+                            <input asp-for="Nombre" class="form-control" name="Nombre" id="Nombre" placeholder="Ingrese la descripcion de la Moneda/billete" />
+                            <div class="text-danger small">
+                                <span asp-validation-for="Nombre"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Ano" class="form-label">Año de acuñacion</label>
+                            <input asp-for="Ano" class="form-control" name="Ano" id="Ano" placeholder="Ingrese el Año " />
+                            <div class="text-danger small">
+                                <span asp-validation-for="Ano"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Ceca" class="form-label">Ceca</label>
+                            <input asp-for="Ceca" class="form-control" name="Ceca" itemid="Ceca" placeholder="Ingrese la Ceca/ casa de Moneda" />
+                            <div class="text-danger small">
+                                <span asp-validation-for="Ceca"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Material" class="form-label">Material</label>
+                            <input asp-for="Material" class="form-control" name="Material" id="Material" placeholder="Ingrese el Material" />
+                            <div class="text-danger small">
+                                <span asp-validation-for="Material"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Estado" class="form-label">Estado</label>
+                            <input asp-for="Estado" class="form-control" name="Estado" dirname="Estado" placeholder="Ingrese el Estado" />
+                            <div class="text-danger small">
+                                <span asp-validation-for="Estado"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Foto" class="form-label">Foto del Certificado</label>
+                            <input asp-for="Foto" type="file" name="Foto" id="Foto" class="form-control" />
+                            <div class="text-danger small">
+                                <span asp-validation-for="Foto"></span>
+                            </div>
+                        </div>
+
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">Guardar Certificado</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+</script>

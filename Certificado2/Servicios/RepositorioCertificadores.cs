@@ -1,5 +1,6 @@
 ﻿using Certificado2.Modelos;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Identity;
 using MySqlConnector;
 using System.Security.Claims;
 using static iText.StyledXmlParser.Jsoup.Select.Evaluator;
@@ -16,6 +17,8 @@ namespace Certificado2.Servicios
         Task CrearAsync(Certificadores objFuentesAbastecimiento);
         Task<IEnumerable<Certificadores>> ObtenerListado();
         Task<IEnumerable<Certificadores>> ObtenerListadoCertifica(string _Certificador);
+
+        
         Task ModificarAsync(Certificadores objFuentesAbastecimiento);
         Task ModificarCLogoAsync(Certificadores objFuentesAbastecimiento);
         Task SuspenderCertificador(int id);
@@ -24,7 +27,9 @@ namespace Certificado2.Servicios
         Task EliminarAsync(int id);
        
         Task<IEnumerable<UsuarioCertificados>> ObtenerListadoUsuarios(int _Certificador, string Usuario);
-        Task<UsuarioCertificados> ObtenerDetalleUsuario(int id);
+        Task<UsuarioCertificados> ObtenerDetalleUsuario(string id);
+
+        Task<bool> ActualizarUsuario(UsuarioCertificados usuario);
     }
 
     public class RepositorioCertificadores: IRepositorioCertificadores
@@ -418,7 +423,7 @@ namespace Certificado2.Servicios
         }
 
 
-        public async Task<UsuarioCertificados> ObtenerDetalleUsuario(int id)
+        public async Task<UsuarioCertificados> ObtenerDetalleUsuario(string id)
         {
             // Busca el usuario en la base de datos por su ID
             UsuarioCertificados usuario = new UsuarioCertificados();
@@ -429,7 +434,7 @@ namespace Certificado2.Servicios
                 {
                     await connection.OpenAsync();
 
-                    string selectQuery = "SELECT * FROM aspnetusers where  idcentificador=" + id;
+                    string selectQuery = "SELECT * FROM aspnetusers where  id='" + id +"'";
 
                     using (var selectCommand = new MySqlCommand(selectQuery, connection))
                     {
@@ -442,7 +447,7 @@ namespace Certificado2.Servicios
                                     Id = reader["Id"] as string,
                                     idcertificador = reader["idcertificador"] != DBNull.Value ? Convert.ToInt32(reader["idcertificador"]) : 0,
                                     NombreCompleto = reader["NombreCompleto"] as string,
-                                    UserName = reader["usuario"] as string,
+                                    UserName = reader["UserName"] as string,
                                     NormalizedUserName = reader["NormalizedUserName"] as string,
                                     Email = reader["Email"] as string,
                                     EmailConfirmed = reader["EmailConfirmed"] != DBNull.Value ? Convert.ToBoolean(reader["EmailConfirmed"]) : false,
@@ -461,5 +466,59 @@ namespace Certificado2.Servicios
             }
             catch (Exception ex) { return usuario; }
         }
+
+        public async Task<bool> ActualizarUsuario(UsuarioCertificados usuario)
+        {
+            try
+            {
+                using (MySqlConnection connection = new MySqlConnection(connectionString))
+                {
+                    await connection.OpenAsync();
+
+                    string updateQuery = @"
+                UPDATE aspnetusers 
+                SET 
+                    idcertificador = @idcertificador, 
+                    NombreCompleto = @NombreCompleto, 
+                    UserName = @UserName, 
+                    NormalizedUserName = @NormalizedUserName, 
+                    Email = @Email, 
+                    EmailConfirmed = @EmailConfirmed, 
+                    PhoneNumber = @PhoneNumber, 
+                    PhoneNumberConfirmed = @PhoneNumberConfirmed, 
+                    TwoFactorEnabled = @TwoFactorEnabled
+                WHERE Id = @Id";
+
+                    using (var updateCommand = new MySqlCommand(updateQuery, connection))
+                    {
+                        // Agregar parámetros a la consulta
+                        updateCommand.Parameters.AddWithValue("@Id", usuario.Id);
+                        updateCommand.Parameters.AddWithValue("@idcertificador", usuario.idcertificador);
+                        updateCommand.Parameters.AddWithValue("@NombreCompleto", usuario.NombreCompleto ?? (object)DBNull.Value);
+                        updateCommand.Parameters.AddWithValue("@UserName", usuario.UserName ?? (object)DBNull.Value);
+                        updateCommand.Parameters.AddWithValue("@NormalizedUserName", usuario.NormalizedUserName ?? (object)DBNull.Value);
+                        updateCommand.Parameters.AddWithValue("@Email", usuario.Email ?? (object)DBNull.Value);
+                        updateCommand.Parameters.AddWithValue("@EmailConfirmed", usuario.EmailConfirmed);
+                        updateCommand.Parameters.AddWithValue("@PhoneNumber", usuario.PhoneNumber ?? (object)DBNull.Value);
+                        updateCommand.Parameters.AddWithValue("@PhoneNumberConfirmed", usuario.PhoneNumberConfirmed);
+                        updateCommand.Parameters.AddWithValue("@TwoFactorEnabled", usuario.TwoFactorEnabled);
+
+                        // Ejecutar el comando de actualización
+                        int rowsAffected = await updateCommand.ExecuteNonQueryAsync();
+
+                        // Verificar si se afectó alguna fila
+                        return rowsAffected > 0;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Manejar la excepción si es necesario
+                return false;
+            }
+        }
+
+
+
     }
 }

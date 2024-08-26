@@ -15,6 +15,8 @@ namespace Certificado2.Servicios
 
         Task<IEnumerable<VMoneda>> ObtenerListadoMoneda(string certificador, string moneda);
 
+        Task<int> CrearCertificado(Moneda moneda);
+
     }
 
     public class RepositorioMonedas : IRepositorioMonedas
@@ -85,7 +87,7 @@ namespace Certificado2.Servicios
                                     Serie = reader["Serie"] as string,
                                     Folio = (int)reader["Folio"],
                                     Telefono = reader["Telefono"] as string,
-                                    Moneda = reader["Moneda"] as string,
+                                    Nombre = reader["Nombre"] as string,
                                     Ano = reader["Ano"] as string,
                                     Ceca = reader["Ceca"] as string,
                                     Material = reader["Material"] as string,
@@ -134,7 +136,7 @@ namespace Certificado2.Servicios
                                     RFC = reader["RFC"] as string,
                                     Serie = reader["Serie"] as string,
                                     Folio = (int)reader["Folio"],
-                                    Moneda = reader["Moneda"] as string,
+                                    Nombre = reader["Nombre"] as string,
                                     Ano = reader["Ano"] as string,
                                     Ceca = reader["Ceca"] as string,
                                     Material = reader["Material"] as string,
@@ -185,7 +187,7 @@ namespace Certificado2.Servicios
                                     RFC = reader["RFC"] as string,
                                     Serie = reader["Serie"] as string,
                                     Folio = (int)reader["Folio"],
-                                    Moneda = reader["Moneda"] as string,
+                                    Nombre = reader["Nombre"] as string,
                                     Ano = reader["Ano"] as string,
                                     Ceca = reader["Ceca"] as string,
                                     Material = reader["Material"] as string,
@@ -236,7 +238,7 @@ namespace Certificado2.Servicios
                                     RFC = reader["RFC"] as string,
                                     Serie = reader["Serie"] as string,
                                     Folio = (int)reader["Folio"],
-                                    Moneda = reader["Moneda"] as string,
+                                    Nombre = reader["Nombre"] as string,
                                     Ano = reader["Ano"] as string,
                                     Ceca = reader["Ceca"] as string,
                                     Material = reader["Material"] as string,
@@ -258,6 +260,50 @@ namespace Certificado2.Servicios
             }
 
             return listado;
+        }
+
+
+        public async Task<int> CrearCertificado(Moneda moneda)
+        {
+            try
+            {
+                using (MySqlConnection connection = new MySqlConnection(connectionString))
+                {
+                    await connection.OpenAsync();
+
+                    string insertQuery = @"
+                    INSERT INTO monedas 
+                    ( Serie, Folio, IdCertificador, idusucer, Nombre, Ano, Ceca, Material, Estado, Foto, fecha) 
+                    VALUES 
+                    ( @Serie, @Folio, @IdCertificador, @idusucer, @Nombre, @Ano, @Ceca, @Material, @Estado, @Foto, @fecha);
+                    SELECT LAST_INSERT_ID();";
+
+                    using (var insertCommand = new MySqlCommand(insertQuery, connection))
+                    {
+         
+                        insertCommand.Parameters.AddWithValue("@Serie", moneda.Serie);
+                        insertCommand.Parameters.AddWithValue("@Folio", moneda.Folio);
+                        insertCommand.Parameters.AddWithValue("@IdCertificador", moneda.IdCertificador);
+                        insertCommand.Parameters.AddWithValue("@idusucer", moneda.idusucer);
+                        insertCommand.Parameters.AddWithValue("@Nombre", moneda.Nombre);
+                        insertCommand.Parameters.AddWithValue("@Ano", moneda.Ano);
+                        insertCommand.Parameters.AddWithValue("@Ceca", moneda.Ceca);
+                        insertCommand.Parameters.AddWithValue("@Material", moneda.Material);
+                        insertCommand.Parameters.AddWithValue("@Estado", moneda.Estado);
+                        insertCommand.Parameters.AddWithValue("@Foto", moneda.Foto);
+                        insertCommand.Parameters.AddWithValue("@fecha", moneda.fecha);
+
+                        int newId = Convert.ToInt32(await insertCommand.ExecuteScalarAsync());
+                        return newId;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Loguear el error
+                Console.WriteLine($"Error al crear el certificado: {ex.Message}");
+                return -1;
+            }
         }
     }
 }

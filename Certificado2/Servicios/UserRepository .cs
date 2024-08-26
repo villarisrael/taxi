@@ -54,5 +54,16 @@ namespace Certificado2.Servicios
             var result = await _userManager.AddToRoleAsync(user, roleName);
             return result;
         }
+
+
+        public async Task<UsuarioCertificados> GetUsuarioByIdAsync(string id)
+        {
+            return await _userManager.FindByIdAsync(id);
+        }
+
+        public async Task<UsuarioCertificados> GetUsuarioByUsernameAsync(string username)
+        {
+            return await _userManager.FindByNameAsync(username);
+        }
     }
 }

@@ -1,0 +1,34 @@
+﻿@{
+    ViewData["Title"] = "Detalles Usuario";
+    Layout = "_Layout";
+}
+
+
+@model Certificado2.UsuarioCertificados
+
+<div class="container mt-5" style="padding-bottom:20px">
+    <h2 class="mb-4">Detalles del Usuario</h2>
+    <div class="card" >
+        <div class="card-header">Información General</div>
+        <div class="card-body">
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>ID:</strong> @Model.Id</p>
+                    <p><strong>Nombre de Usuario:</strong> @Model.UserName</p>
+                    <p><strong>Email:</strong> @Model.Email</p>
+                    <p><strong>Email Confirmado:</strong> @(Model.EmailConfirmed ? "Sí" : "No")</p>
+                    <p><strong>Nombre Completo:</strong> @Model.NombreCompleto</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Teléfono:</strong> @Model.PhoneNumber</p>
+                    <p><strong>Teléfono Confirmado:</strong> @(Model.PhoneNumberConfirmed ? "Sí" : "No")</p>
+                    <p><strong>Certificador:</strong> @ViewBag.Certificador</p>
+                    <p><strong>Lockout Habilitado:</strong> @(Model.LockoutEnabled ? "Sí" : "No")</p>
+                    <p><strong>Lockout End:</strong> @(Model.LockoutEnd.HasValue ? Model.LockoutEnd.Value.ToString("g") : "N/A")</p>
+                </div>
+            </div>
+            <a href="@Url.Action("ModificarUsuario", "Certificadores", new { id = Model.Id })" class="btn btn-secondary mt-3">Editar</a>
+        </div>
+    </div>
+</div>

@@ -5,6 +5,11 @@ VisualStudioVersion = 17.6.33815.320
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Certificado2", "Certificado2\Certificado2.csproj", "{DC1FE177-B95C-43AC-AF7D-F819CDF2F35A}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Elementos de la solución", "Elementos de la solución", "{A23D1EEA-80F0-48F3-B902-07FD924D0FFC}"
+	ProjectSection(SolutionItems) = preProject
+		launchSettings.json = launchSettings.json
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

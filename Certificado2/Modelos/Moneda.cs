@@ -11,7 +11,7 @@
         public string Serie { get; set; }
         public int Folio { get; set; }
         public int? IdCertificador { get; set; }
-        public int? IdUsuario { get; set; }
+        public string idusucer { get; set; }
         public string Nombre { get; set; }
         public string Ano { get; set; }
         public string Ceca { get; set; }
@@ -40,7 +40,7 @@
         public string Serie { get; set; }
         public int Folio { get; set; }
        
-        public string Moneda { get; set; }
+        public string Nombre { get; set; }
         public string Ano { get; set; }
         public string Ceca { get; set; }
         public string Material { get; set; }

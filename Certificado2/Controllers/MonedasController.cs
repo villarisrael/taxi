@@ -148,8 +148,8 @@ namespace Certificado2.Controllers
                     atributos.AddCell(new Cell().Add(valorfecha).SetBorder(new SolidBorder(1)));
 
 
-                    Paragraph Moneda = new Paragraph("Moneda").AddStyle(negrita12);
-                Paragraph valormoneda = new Paragraph(datosMoneda.Moneda).AddStyle(negrita12);
+                    Paragraph Moneda = new Paragraph("Descripcion").AddStyle(negrita12);
+                Paragraph valormoneda = new Paragraph(datosMoneda.Nombre).AddStyle(negrita12);
                 atributos.AddCell(new Cell().Add(Moneda).SetBorder(new SolidBorder(1)));
                 atributos.AddCell(new Cell().Add(valormoneda).SetBorder(new SolidBorder(1)));
 

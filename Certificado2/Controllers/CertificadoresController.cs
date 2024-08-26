@@ -264,12 +264,15 @@ namespace Certificado2.Controllers
         }
 
 
-        public async Task<ActionResult> DetalleUsuario(int id)
+        public async Task<ActionResult> DetalleUsuario(string id)
         {
             try
             {
-                var certificador = await _repositorioCertificadores.ObtenerDetalleUsuario(id);
-                return View(certificador);
+                var usuariodecertificador = await _repositorioCertificadores.ObtenerDetalleUsuario(id);
+
+                var Certificador = await  _repositorioCertificadores.ObtenerDetalleAsync(usuariodecertificador.idcertificador);
+                ViewBag.Certificador= Certificador.RazonSocial;
+                return View(usuariodecertificador);
 
 
             }
@@ -278,5 +281,93 @@ namespace Certificado2.Controllers
                 return StatusCode(500, $"Error al obtener el detalle del usuario: {ex.Message}");
             }
         }
+
+        public async Task<ActionResult> ModificarUsuario(string id)
+        {
+            try
+            {
+                var usuariodecertificador = await _repositorioCertificadores.ObtenerDetalleUsuario(id);
+
+                var Certificador = await _repositorioCertificadores.ObtenerDetalleAsync(usuariodecertificador.idcertificador);
+                ViewBag.Certificador = Certificador.RazonSocial;
+                return View(usuariodecertificador);
+
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error al obtener el detalle del usuario: {ex.Message}");
+            }
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> ModificarUsuario(UsuarioCertificados model)
+        {
+            if (!ModelState.IsValid)
+            {
+                // Si el modelo no es válido, volver a cargar el certificador y regresar a la vista con los errores de validación
+                try
+                {
+                    var Certificador = await _repositorioCertificadores.ObtenerDetalleAsync(model.idcertificador);
+                    ViewBag.Certificador = Certificador.RazonSocial;
+                }
+                catch (Exception ex)
+                {
+                    return StatusCode(500, $"Error al obtener el detalle del certificador: {ex.Message}");
+                }
+
+                return View(model);
+            }
+
+            try
+            {
+                // Obtener el usuario actual desde la base de datos
+                var usuario = await _repositorioCertificadores.ObtenerDetalleUsuario(model.Id);
+
+                if (usuario == null)
+                {
+                    return NotFound("Usuario no encontrado");
+                }
+
+                // Actualizar las propiedades del usuario
+                usuario.Email = model.Email;
+                usuario.PhoneNumber = model.PhoneNumber;
+                usuario.NombreCompleto = model.NombreCompleto;
+                usuario.idcertificador = model.idcertificador;
+                usuario.EmailConfirmed = model.EmailConfirmed;
+                usuario.PhoneNumberConfirmed = model.PhoneNumberConfirmed;
+                usuario.LockoutEnabled = model.LockoutEnabled;
+
+                // Guardar los cambios en el repositorio o base de datos
+                var result = await _repositorioCertificadores.ActualizarUsuario(usuario);
+
+                if (result)
+                {
+                    return RedirectToAction("DetalleUsuario", new { id = model.Id });
+                }
+                else
+                {
+                    ModelState.AddModelError("", "No se pudo actualizar el usuario.");
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error al modificar el usuario: {ex.Message}");
+            }
+
+            // Si llega aquí, algo salió mal, volver a cargar la vista con el modelo actual
+            try
+            {
+                var Certificador = await _repositorioCertificadores.ObtenerDetalleAsync(model.idcertificador);
+                ViewBag.Certificador = Certificador.RazonSocial;
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error al obtener el detalle del certificador: {ex.Message}");
+            }
+
+            return View(model);
+        }
+
     }
 }

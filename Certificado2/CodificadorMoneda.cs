@@ -10,7 +10,7 @@
         public string CodificarMoneda(VMoneda datosMoneda)
         {
             // Concatenar los atributos de la moneda
-            string atributosMoneda = $"{datosMoneda.Moneda}-{datosMoneda.Ano}-{datosMoneda.Ceca}-{datosMoneda.Material}-{datosMoneda.Estado}";
+            string atributosMoneda = $"{datosMoneda.Nombre}-{datosMoneda.Ano}-{datosMoneda.Ceca}-{datosMoneda.Material}-{datosMoneda.Estado}";
 
             // Agregar la palabra base
             string cadenaAProcesar = atributosMoneda + "Villar01";
