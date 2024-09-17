@@ -16,18 +16,21 @@ namespace Certificado2.Controllers
     {
         private readonly IRepositorioMonedas repositorioMonedas;
         private readonly IRepositorioJoyeria repositorioJoyeria;
+        private readonly IRepositorioVJoyeria repositorioVJoyeria;
         private readonly UserManager<UsuarioCertificados> _userManager;
         private readonly IFoliosRepository _repositoriofolios;
         private readonly ICertificadoresFoliosRepository _repositorioFoliosCertificadores;
         private readonly IRepositorioCertificadores _repositorioCertificadores;
-       public RegistroController(IRepositorioMonedas _repositorioMonedas, UserManager<UsuarioCertificados> userManager, IFoliosRepository repositoriofolios, ICertificadoresFoliosRepository repositorioFoliosCertificadores, IRepositorioCertificadores repositoriocer)
+       public RegistroController(IRepositorioMonedas _repositorioMonedas, UserManager<UsuarioCertificados> userManager, IFoliosRepository repositoriofolios, ICertificadoresFoliosRepository repositorioFoliosCertificadores, IRepositorioCertificadores repositoriocer, IRepositorioVJoyeria _repositorioVJoyeria, IRepositorioJoyeria _repositorioJoyeria)
         {
             repositorioMonedas = _repositorioMonedas;
             _userManager = userManager;
             _repositoriofolios = repositoriofolios; 
             _repositorioFoliosCertificadores = repositorioFoliosCertificadores;
             _repositorioCertificadores = repositoriocer;
-    }
+            repositorioJoyeria = _repositorioJoyeria;
+            repositorioVJoyeria = _repositorioVJoyeria;
+        }
 
         [HttpGet]
       
@@ -269,18 +272,18 @@ namespace Certificado2.Controllers
         [HttpGet]
         public async Task<IActionResult> IndexJoyeriaCertificador(int Certificador, int page = 1, int pageSize = 10)
         {
-            IEnumerable<VJoyeria> listadoMonedas = new List<VJoyeria>();
+            IEnumerable<VJoyeria> listadoJoyas = new List<VJoyeria>();
 
             Certificadores certificadores = await _repositorioCertificadores.ObtenerDetalleAsync(Certificador);
 
-            listadoMonedas = await repositorioJoyeria.ObtenerListadoJoyeria(certificadores.RazonSocial);
+            listadoJoyas = await repositorioVJoyeria.ObtenerListadoJoyeria(Certificador);
 
 
 
-            var elementosPag = listadoMonedas.Skip((page - 1) * pageSize).Take(pageSize);
+            var elementosPag = listadoJoyas.Skip((page - 1) * pageSize).Take(pageSize);
 
             // Paginación
-            int count = listadoMonedas.Count();
+            int count = listadoJoyas.Count();
             ViewBag.TotalPages = (int)Math.Ceiling((double)count / pageSize);
             ViewBag.CurrentPage = page;
             ViewBag.pageSize = pageSize;

@@ -1,9 +1,9 @@
 ﻿@{
-    ViewData["Title"] = "Listado de certificados ";
+    ViewData["Title"] = "Listado de Certificados";
     Layout = "~/Pages/Shared/_Layout.cshtml";
 }
 
-@model IEnumerable<Certificado2.Modelos.VMoneda>
+@model IEnumerable<Certificado2.Modelos.VJoyeria>
 
 @{
     int currentPage = ViewBag.CurrentPage;
@@ -15,7 +15,7 @@
     <h1 class="mb-4">Numismática</h1>
 
     <!-- Formulario de búsqueda y selección de página -->
-    <form method="get" action="@Url.Action("IndexNumismatica")" class="mb-4">
+    <form method="get" action="@Url.Action("IndexJoyeriaCertificador")" class="mb-4">
         <div class="form-row align-items-center">
             <div class="col-auto">
                 <label class="sr-only" for="pageSize">Elementos por página:</label>
@@ -25,7 +25,7 @@
                     <option value="20" @(pageSize == 20 ? "selected" : "")>20</option>
                 </select>
             </div>
-          
+            
             <div class="col-auto">
                 <button type="submit" class="btn btn-primary">Buscar <i class="fa fa-search" aria-hidden="true"></i></button>
             </div>
@@ -40,8 +40,8 @@
                 <th>Serie</th>
                 <th>Folio</th>
                 <th>Descripcion</th>
-                <th>Ceca</th>
-                <th>Año de acuñacion</th>
+                <th>Marca</th>
+                <th>Estado</th>
             </tr>
         </thead>
         <tbody>
@@ -51,11 +51,11 @@
                     <td>@item.fecha.ToShortDateString()</td>
                     <td>@item.Serie</td>
                     <td>@item.Folio</td>
-                    <td>@item.Nombre</td>
-                    <td>@item.Ceca</td>
-                    <td>@item.Ano</td>
+                    <td>@item.Objeto</td>
+                    <td>@item.Material</td>
+                    <td>@item.Estado</td>
                     <td>
-                        <a href="@Url.Action("CreatePdf", "Monedas")?Serie=@item.Serie&Folio=@item.Folio" class="btn btn-info">Ver</a>
+                        <a href="@Url.Action("CreatePdf", "Joyeria")?Serie=@item.Serie&Folio=@item.Folio" class="btn btn-info">Ver</a>
 
                     </td>
                 </tr>
@@ -70,7 +70,7 @@
             @if (currentPage > 1)
             {
                 <li class="page-item">
-                    <a class="page-link" href="@Url.Action("IndexNumismatica", new { page = currentPage - 1, pageSize })" aria-label="Anterior">
+                    <a class="page-link" href="@Url.Action("IndexJoyeriaCertificador", new { page = currentPage - 1, pageSize })" aria-label="Anterior">
                         <span aria-hidden="true">&laquo;</span>
                     </a>
                 </li>
@@ -79,14 +79,14 @@
             @for (int i = 1; i <= totalPages; i++)
             {
                 <li class="page-item @(i == currentPage ? "active" : "")">
-                    <a class="page-link" href="@Url.Action("IndexNumismatica", new { page = i, pageSize })">@i</a>
+                    <a class="page-link" href="@Url.Action("IndexJoyeriaCertificador", new { page = i, pageSize })">@i</a>
                 </li>
             }
 
             @if (currentPage < totalPages)
             {
                 <li class="page-item">
-                    <a class="page-link" href="@Url.Action("IndexNumismatica", new { page = currentPage + 1, pageSize })" aria-label="Siguiente">
+                    <a class="page-link" href="@Url.Action("IndexJoyeriaCertificador", new { page = currentPage + 1, pageSize })" aria-label="Siguiente">
                         <span aria-hidden="true">&raquo;</span>
                     </a>
                 </li>

@@ -9,7 +9,7 @@ namespace Certificado2.Servicios
     {
         Task<Joyeria> ObtenerDatosJoyeria(int idJoyeria);
         Task<IEnumerable<Joyeria>> ObtenerListadoJoyeria();
-        Task<IEnumerable<VJoyeria>> ObtenerListadoJoyeria(string certificador);
+       
         Task<int> CrearCertificado(Joyeria joyeria);
     }
 
@@ -118,56 +118,7 @@ namespace Certificado2.Servicios
             return listado;
         }
 
-        public async Task<IEnumerable<VJoyeria>> ObtenerListadoJoyeria(string certificador)
-        {
-            var listado = new List<VJoyeria>();
-
-            try
-            {
-                using (MySqlConnection connection = new MySqlConnection(connectionString))
-                {
-                    await connection.OpenAsync();
-
-                    string selectQuery = "SELECT * FROM vjoyeria WHERE idusucer = @certificador ORDER BY IdJoyeria DESC LIMIT 200";
-
-                    using (var selectCommand = new MySqlCommand(selectQuery, connection))
-                    {
-                        selectCommand.Parameters.AddWithValue("@certificador", "'" + certificador + "'");
-
-                        using (var reader = await selectCommand.ExecuteReaderAsync())
-                        {
-                            while (await reader.ReadAsync())
-                            {
-                                var joyeria = new VJoyeria
-                                {
-                                    IdCertificado = (int)reader["IdCertificado"],
-                                    Serie = reader["Serie"] as string,
-                                    Folio = (int)reader["Folio"] ,
-                                    Objeto = reader["Objeto"] as string,
-                                    Material = reader["Material"] as string,
-                                    Estado = reader["Estado"] as string,
-                                    Marca = reader["Marca"] as string,
-                                    Observacion = reader["Observacion"] as string,
-                                    fecha = reader["fecha"] is DBNull ? DateTime.MinValue : (DateTime)reader["fecha"],
-                                    Foto = reader["Foto"] as byte[],
-                                    idusucer = reader["idusucer"] as string,
-                                    IdCertificador = (int)reader["IdCertificador"]
-                                };
-
-                                listado.Add(joyeria);
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                // Loguear el error
-                Console.WriteLine($"Error al obtener listado de joyería por certificador: {ex.Message}");
-            }
-
-            return listado;
-        }
+       
 
         public async Task<int> CrearCertificado(Joyeria joyeria)
         {

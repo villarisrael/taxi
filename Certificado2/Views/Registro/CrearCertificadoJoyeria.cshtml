@@ -3,7 +3,7 @@
     ViewData["Title"] = "CrearCertificadoJoyeria";
     Layout = "~/Pages/Shared/_Layout.cshtml";
 }
-@model Proyecto.Models.Joyeria
+@model Certificado2.Modelos.Joyeria
 
 <div class="container mt-5">
     <div class="row justify-content-center">
@@ -22,29 +22,29 @@
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label for="objeto" class="form-label">Objeto</label>
-                            <input type="text" name="objeto" class="form-control" id="objeto" value="@Model.Objeto" >
+                            <input type="text" name="Objeto" class="form-control" id="Objeto"  value="@Model.Objeto" >
                         </div>
                         <div class="col-md-6">
                             <label for="material" class="form-label">Material</label>
-                            <input type="text" name="material" class="form-control" id="material" value="@Model.Material" >
+                            <input type="text" name="Material" class="form-control" id="Material"  value="@Model.Material" >
                         </div>
                     </div>
 
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label for="estado" class="form-label">Estado del objeto</label>
-                            <input type="text" name="estado" class="form-control" id="estado" value="@Model.Estado" >
+                            <input type="text" name="Estado" class="form-control" id="Estado"  value="@Model.Estado" >
                         </div>
                         <div class="col-md-6">
                             <label for="marca" class="form-label">Marca</label>
-                            <input type="text" class="form-control" id="marca" value="@Model.Marca" >
+                            <input type="text" class="form-control" id="marca" name="Marca" value="@Model.Marca" >
                         </div>
                     </div>
 
                     <div class="row mb-3">
                         <div class="col-12">
                             <label for="observacion" class="form-label">Observación</label>
-                            <textarea class="form-control" name="Observacion" id="observacion" rows="3" >@Model.Observacion</textarea>
+                            <textarea class="form-control" name="Observacion" id="Observacion" rows="3" >@Model.Observacion</textarea>
                         </div>
                     </div>
 

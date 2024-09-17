@@ -16,6 +16,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddTransient<IRepositorioCertificadores, RepositorioCertificadores>();
 builder.Services.AddTransient<IRepositorioMonedas, RepositorioMonedas>();
+builder.Services.AddTransient<IRepositorioJoyeria, RepositorioJoyeria>();
 builder.Services.AddTransient<IRepositorioVJoyeria, RepositorioVJoyeria>();
 builder.Services.AddTransient<IRepositorioVendedor, RepositorioVendedor>();
 builder.Services.AddTransient<IRepositorioArtesania, RepositorioArtesania>();
