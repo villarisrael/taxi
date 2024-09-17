@@ -29,8 +29,13 @@
         [StringLength(150)]
         public string Marca { get; set; }
 
+        public string Observacion { get; set; }
         public DateTime fecha { get; set; }
         public byte[] Foto { get; set; }
+
+        public string idusucer { get; set; }
+
+        public int IdCertificador { get; set; }
     }
 
    
@@ -48,10 +53,12 @@
             public string Estado { get; set; }
             public string Marca { get; set; }
             public string Observacion { get; set; }
-
+           
               public DateTime fecha { get; set; } 
-        public byte[] Foto { get; set; }    
-        }
+        public byte[] Foto { get; set; }
+        public string idusucer { get; set; }
+        public int IdCertificador { get; set; }
+    }
    
 
 

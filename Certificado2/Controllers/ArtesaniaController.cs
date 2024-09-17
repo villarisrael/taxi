@@ -217,11 +217,15 @@ namespace Certificado2.Controllers
                 bytesStream = ms.ToArray();
             }
 
+            //var stream = new MemoryStream(bytesStream);
+            //return new FileStreamResult(stream, "application/pdf")
+            //{
+            //    FileDownloadName = $"Artesania_{artesania.Serie.ToUpper()}_{artesania.Folio.ToString()}.pdf"
+            //};
+
             var stream = new MemoryStream(bytesStream);
-            return new FileStreamResult(stream, "application/pdf")
-            {
-                FileDownloadName = $"Artesania_{artesania.Serie.ToUpper()}_{artesania.Folio.ToString()}.pdf"
-            };
+            Response.Headers.Add("Content-Disposition", "inline; filename=" + $"Artesania_{artesania.Serie.ToUpper()}_{artesania.Folio.ToString()}.pdf"); // Forzar visualización inline en el navegador
+            return new FileStreamResult(stream, "application/pdf");
         }
     }
 }

@@ -18,7 +18,8 @@ namespace Certificado2.Servicios
         Task<IEnumerable<Certificadores>> ObtenerListado();
         Task<IEnumerable<Certificadores>> ObtenerListadoCertifica(string _Certificador);
 
-        
+     
+
         Task ModificarAsync(Certificadores objFuentesAbastecimiento);
         Task ModificarCLogoAsync(Certificadores objFuentesAbastecimiento);
         Task SuspenderCertificador(int id);
@@ -135,6 +136,7 @@ namespace Certificado2.Servicios
 
             return listado;
         }
+
 
         public async Task CrearAsync(Certificadores objCertificadores)
         {

@@ -51,6 +51,7 @@
 <table class="table table-striped">
     <thead>
         <tr>
+                <th>Fecha</th>
             <th>Razon Social</th>
             <th>Nombre Responsable</th>
             <th>Serie</th>
@@ -65,6 +66,7 @@
         @foreach (var item in Model)
         {
             <tr>
+                    <td>@item.fecha.ToShortDateString()</td>
                 <td>@item.RazonSocial</td>
                 <td>@item.NombreResponsable</td>
                 <td>@item.Serie</td>

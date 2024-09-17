@@ -1,4 +1,5 @@
-﻿using MySqlConnector;
+﻿using Certificado2.Modelos;
+using MySqlConnector;
 using System.Data;
 
 
@@ -21,6 +22,12 @@ namespace Certificado2.Servicios
         Task<FolioSiguiente> GetFolioMonedaAsync();
 
         Task<FolioSiguiente> GetFolioJoyeriaAsync();
+
+        Task ActualizaFolioMonedaAsync();
+
+        Task ActualizaFolioJoyeriaAsync();
+
+        Task ActualizaFolioArtesaniaAsync();
     }
 
 
@@ -146,6 +153,73 @@ namespace Certificado2.Servicios
             folio.Folio = await GetNextFolioJoyeríaAsync();
             return folio;
         }
+
+        public async Task ActualizaFolioMonedaAsync()
+        {
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                await connection.OpenAsync(); // Usar await para abrir la conexión asincrónicamente
+
+                try
+                {
+                    string updateQuery = @"UPDATE folios SET FolioMoneda = FolioMoneda + 1";
+                    using (var command = new MySqlCommand(updateQuery, connection))
+                    {
+                        await command.ExecuteNonQueryAsync(); // Usar await para ejecutar la consulta asincrónicamente
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Loguear el error de manera adecuada en producción, como en un archivo de log o en un sistema de monitoreo.
+                    Console.WriteLine(ex.ToString());
+                }
+            }
+        }
+
+        public async Task ActualizaFolioJoyeriaAsync()
+        {
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                await connection.OpenAsync(); // Usar await para abrir la conexión asincrónicamente
+
+                try
+                {
+                    string updateQuery = @"UPDATE folios SET FolioJoyeria = FolioJoyeria + 1";
+                    using (var command = new MySqlCommand(updateQuery, connection))
+                    {
+                        await command.ExecuteNonQueryAsync(); // Usar await para ejecutar la consulta asincrónicamente
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Loguear el error de manera adecuada en producción, como en un archivo de log o en un sistema de monitoreo.
+                    Console.WriteLine(ex.ToString());
+                }
+            }
+        }
+
+        public async Task ActualizaFolioArtesaniaAsync()
+        {
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                await connection.OpenAsync(); // Usar await para abrir la conexión asincrónicamente
+
+                try
+                {
+                    string updateQuery = @"UPDATE folios SET FolioArtesania = FolioArtesania + 1";
+                    using (var command = new MySqlCommand(updateQuery, connection))
+                    {
+                        await command.ExecuteNonQueryAsync(); // Usar await para ejecutar la consulta asincrónicamente
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Loguear el error de manera adecuada en producción, como en un archivo de log o en un sistema de monitoreo.
+                    Console.WriteLine(ex.ToString());
+                }
+            }
+        }
+
 
     }
 }

@@ -206,11 +206,15 @@ namespace Certificado2.Controllers
                 bytesStream = ms.ToArray();
             }
 
+            //var stream = new MemoryStream(bytesStream);
+            //return new FileStreamResult(stream, "application/pdf")
+            //{
+            //    FileDownloadName = $"Joyeria_{datosJoyeria.Serie.ToUpper()}_{datosJoyeria.Folio.ToString()}.pdf"
+            //};
+
             var stream = new MemoryStream(bytesStream);
-            return new FileStreamResult(stream, "application/pdf")
-            {
-                FileDownloadName = $"Joyeria_{datosJoyeria.Serie.ToUpper()}_{datosJoyeria.Folio.ToString()}.pdf"
-            };
+            Response.Headers.Add("Content-Disposition", "inline; filename=" + $"Joyeria_{datosJoyeria.Serie.ToUpper()}_{datosJoyeria.Folio.ToString()}.pdf"); // Forzar visualización inline en el navegador
+            return new FileStreamResult(stream, "application/pdf");
         }
     }
 }

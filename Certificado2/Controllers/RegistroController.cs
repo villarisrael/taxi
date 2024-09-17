@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Certificado2.Controllers
@@ -14,16 +15,19 @@ namespace Certificado2.Controllers
     public class RegistroController : Controller
     {
         private readonly IRepositorioMonedas repositorioMonedas;
+        private readonly IRepositorioJoyeria repositorioJoyeria;
         private readonly UserManager<UsuarioCertificados> _userManager;
         private readonly IFoliosRepository _repositoriofolios;
-
-        public RegistroController(IRepositorioMonedas _repositorioMonedas, UserManager<UsuarioCertificados> userManager, IFoliosRepository repositoriofolios)
+        private readonly ICertificadoresFoliosRepository _repositorioFoliosCertificadores;
+        private readonly IRepositorioCertificadores _repositorioCertificadores;
+       public RegistroController(IRepositorioMonedas _repositorioMonedas, UserManager<UsuarioCertificados> userManager, IFoliosRepository repositoriofolios, ICertificadoresFoliosRepository repositorioFoliosCertificadores, IRepositorioCertificadores repositoriocer)
         {
             repositorioMonedas = _repositorioMonedas;
             _userManager = userManager;
             _repositoriofolios = repositoriofolios; 
-
-        }
+            _repositorioFoliosCertificadores = repositorioFoliosCertificadores;
+            _repositorioCertificadores = repositoriocer;
+    }
 
         [HttpGet]
       
@@ -34,6 +38,13 @@ namespace Certificado2.Controllers
             // Obtener el objeto completo del usuario autenticado
             var usuario = await _userManager.FindByIdAsync(userId);
 
+
+            RespuestaDisponible respuestaDisponible = await _repositorioFoliosCertificadores.GetFoliosDisponiblesAsync(usuario.idcertificador);
+
+            if (respuestaDisponible.Disponibles==0)
+            {
+                return RedirectToAction("SinFolios");
+            }
 
             Moneda moneda = new Moneda
             {
@@ -74,8 +85,13 @@ namespace Certificado2.Controllers
                 int nuevoId = await repositorioMonedas.CrearCertificado(moneda);
                 if (nuevoId > 0)
                 {
-                    // Certificado creado exitosamente
-                    return RedirectToAction("Numismatica");
+                // Certificado creado exitosamente
+                    await _repositorioFoliosCertificadores.ConsumirFoliosAsync(usuario.idcertificador); // registra el consumo del folio
+                    await _repositoriofolios.ActualizaFolioMonedaAsync();
+                    Certificadores certificadores = await _repositorioCertificadores.ObtenerDetalleAsync(usuario.idcertificador);
+                   
+
+                return RedirectToAction("IndexNumismaticaCertificador", new { certificador= usuario.idcertificador });
                 }
                 else
                 {
@@ -109,10 +125,79 @@ namespace Certificado2.Controllers
         }
 
         [HttpGet]
-        public IActionResult Joyeria()
+       public async Task<IActionResult> CrearCertificadoJoyeria()
         {
-            return View();
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            // Obtener el objeto completo del usuario autenticado
+            var usuario = await _userManager.FindByIdAsync(userId);
+
+
+            RespuestaDisponible respuestaDisponible = await _repositorioFoliosCertificadores.GetFoliosDisponiblesAsync(usuario.idcertificador);
+
+            if (respuestaDisponible.Disponibles == 0)
+            {
+                return RedirectToAction("SinFolios");
+            }
+
+            Joyeria joya = new Joyeria
+            {
+                fecha = DateTime.Now,
+                IdCertificador = usuario.idcertificador
+            };
+            ViewBag.Certificador = usuario.NombreCompleto;
+            return View(joya);
+           
         }
+
+        [HttpPost]
+        public async Task<IActionResult> CrearCertificadoJoyeria(Joyeria joyeria, IFormFile Foto)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            // Obtener el objeto completo del usuario autenticado
+            var usuario = await _userManager.FindByIdAsync(userId);
+
+            joyeria.fecha = DateTime.Now;
+            joyeria.idusucer = usuario.Id;
+            joyeria.IdCertificador = usuario.idcertificador;
+
+            FolioSiguiente FOLIOS = await _repositoriofolios.GetFolioJoyeriaAsync();
+
+            joyeria.Serie = FOLIOS.Serie;
+            joyeria.Folio = FOLIOS.Folio;
+
+            if (Foto != null && Foto.Length > 0)
+            {
+                using (var memoryStream = new MemoryStream())
+                {
+                    await Foto.CopyToAsync(memoryStream);
+                    joyeria.Foto = memoryStream.ToArray();
+                }
+            }
+
+
+            int nuevoId = await repositorioJoyeria.CrearCertificado(joyeria);
+            if (nuevoId > 0)
+            {
+                // Certificado creado exitosamente
+                await _repositorioFoliosCertificadores.ConsumirFoliosAsync(usuario.idcertificador); // registra el consumo del folio
+                await _repositoriofolios.ActualizaFolioMonedaAsync();
+                Certificadores certificadores = await _repositorioCertificadores.ObtenerDetalleAsync(usuario.idcertificador);
+
+
+                return RedirectToAction("IndexJoyeriaCertificador", new { certificador = usuario.idcertificador });
+            }
+            else
+            {
+                ModelState.AddModelError("", "Error al crear el certificado.");
+            }
+
+
+            return RedirectToAction("IndexJoyeriaCertificador", new { Certificador = usuario.idcertificador });
+        }
+
+
 
         [HttpGet]
         public IActionResult JoyeriaAdmin()
@@ -158,6 +243,52 @@ namespace Certificado2.Controllers
             return View(elementosPag);
         }
 
+
+        [HttpGet]
+        public async Task<IActionResult> IndexNumismaticaCertificador(int Certificador, int page = 1, int pageSize = 10)
+        {
+            IEnumerable<VMoneda> listadoMonedas = new List<VMoneda>();
+
+            Certificadores certificadores = await _repositorioCertificadores.ObtenerDetalleAsync(Certificador);
+
+            listadoMonedas = await repositorioMonedas.ObtenerListadoMoneda(certificadores.RazonSocial);
+            
+
+
+            var elementosPag = listadoMonedas.Skip((page - 1) * pageSize).Take(pageSize);
+
+            // Paginación
+            int count = listadoMonedas.Count();
+            ViewBag.TotalPages = (int)Math.Ceiling((double)count / pageSize);
+            ViewBag.CurrentPage = page;
+            ViewBag.pageSize = pageSize;
+            return View(elementosPag);
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> IndexJoyeriaCertificador(int Certificador, int page = 1, int pageSize = 10)
+        {
+            IEnumerable<VJoyeria> listadoMonedas = new List<VJoyeria>();
+
+            Certificadores certificadores = await _repositorioCertificadores.ObtenerDetalleAsync(Certificador);
+
+            listadoMonedas = await repositorioJoyeria.ObtenerListadoJoyeria(certificadores.RazonSocial);
+
+
+
+            var elementosPag = listadoMonedas.Skip((page - 1) * pageSize).Take(pageSize);
+
+            // Paginación
+            int count = listadoMonedas.Count();
+            ViewBag.TotalPages = (int)Math.Ceiling((double)count / pageSize);
+            ViewBag.CurrentPage = page;
+            ViewBag.pageSize = pageSize;
+            return View(elementosPag);
+        }
+
+
+
         [HttpGet]
         public IActionResult IndexJoyeria(int id)
         {
@@ -166,6 +297,11 @@ namespace Certificado2.Controllers
 
         [HttpGet]
         public IActionResult IndexArtesania(int id)
+        {
+            return View();
+        }
+
+        public IActionResult SinFolios()
         {
             return View();
         }

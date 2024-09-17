@@ -1,6 +1,19 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity;
 
+@inject UserManager<Certificado2.UsuarioCertificados> UserManager
+@inject SignInManager<Certificado2.UsuarioCertificados> SignInManager
 
+@{
+    var usuario = await UserManager.GetUserAsync(User); // Obtiene el usuario autenticado
+    var IDCertificador = usuario?.idcertificador;
+}
+@*
+@if (IDCertificador != null)
+{
+    <p>ID Certificador: @IDCertificador</p>
+}*@
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
@@ -88,13 +101,13 @@
                     </ul>
                     <div>
                         @{
-                            string usuario = string.Empty;
+                            string usuariosaludo = "Hola";
                             if (User.IsInRole("Admin") || User.IsInRole("Certificador"))
-                            { usuario = "Hola, " + User.Identity.Name;
+                            {  usuariosaludo = "Hola, " + usuario.NombreCompleto;
                             
                             }
                         }
-                        @usuario
+                        @usuariosaludo
                     </div>
                 </div>
             </div>
@@ -181,7 +194,9 @@
                                         <a asp-controller="Registro" asp-action="Artesania" class="nav-link dropdown-toggle">Artesania </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a asp-controller="Index" asp-action="Registro" class="nav-link dropdown-toggle">Lista de Mis Certificados </a>
+                                        <a asp-controller="Registro" asp-action="IndexNumismaticaCertificador"
+                                           asp-route-Certificador="@IDCertificador"
+                                           class="nav-link dropdown-toggle">Lista de Mis Certificados Numismatica</a>
                                     </li>
                                 </ul>
                             </li>

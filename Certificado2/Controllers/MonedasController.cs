@@ -60,12 +60,12 @@ namespace Certificado2.Controllers
         //    return View(moneda);
         //}
 
-      
 
 
 
+        [HttpGet]
 
-    public async Task<FileStreamResult> CreatePdf( string Serie, int Folio)
+        public async Task<FileStreamResult> CreatePdf( string Serie, int Folio)
       {
           
         VMoneda datosMoneda = (VMoneda)await _repositorioMonedas.ObtenerDatosMoneda(Serie, Folio);
@@ -239,12 +239,17 @@ namespace Certificado2.Controllers
 
             bytesStream = ms.ToArray();
         }
+            // ***** el codigo comentado es para descargar
+            //var stream = new MemoryStream(bytesStream);
+            //return new FileStreamResult(stream, "application/pdf")
+            //{
+            //    FileDownloadName = $"Numismatica_{datosMoneda.Serie.ToUpper()}_{datosMoneda.Folio.ToString()}.pdf"
+            //};
 
+            // *** para mostrar en lugar de descargar
             var stream = new MemoryStream(bytesStream);
-            return new FileStreamResult(stream, "application/pdf")
-            {
-                FileDownloadName = $"Numismatica_{datosMoneda.Serie.ToUpper()}_{datosMoneda.Folio.ToString()}.pdf"
-            };
+            Response.Headers.Add("Content-Disposition", "inline; filename="+ $"Numismatica_{datosMoneda.Serie.ToUpper()}_{datosMoneda.Folio.ToString()}.pdf"); // Forzar visualización inline en el navegador
+            return new FileStreamResult(stream, "application/pdf");
         }
 
 

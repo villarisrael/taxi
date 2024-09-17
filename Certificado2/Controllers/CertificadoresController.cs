@@ -53,6 +53,8 @@ namespace Certificado2.Controllers
             return View(elementosPag);
         }
 
+       
+
         //[HttpGet("{id}")]
 
         public async Task<ActionResult> ObtenerDetalle(int id)

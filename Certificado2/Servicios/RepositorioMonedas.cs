@@ -69,7 +69,7 @@ namespace Certificado2.Servicios
                 {
                     await connection.OpenAsync();
 
-                    string selectQuery = "SELECT * FROM Vmonedas WHERE SERIE = @serie AND FOLIO = @folio";
+                    string selectQuery = "SELECT * FROM Vmonedas WHERE SERIE = @serie AND FOLIO = @folio ";
 
                     using (var selectCommand = new MySqlCommand(selectQuery, connection))
                     {
@@ -119,7 +119,7 @@ namespace Certificado2.Servicios
                 {
                     await connection.OpenAsync();
 
-                    string selectQuery = "SELECT * FROM vmonedas ORDER BY fecha DESC LIMIT 200";
+                    string selectQuery = "SELECT * FROM vmonedas ORDER BY idcertificado DESC LIMIT 200";
 
                     using (var selectCommand = new MySqlCommand(selectQuery, connection))
                     {
@@ -170,7 +170,7 @@ namespace Certificado2.Servicios
                 {
                     await connection.OpenAsync();
 
-                    string selectQuery = "SELECT * FROM vmonedas  razonsocial like '%"+certificador+ "%' or  razonsocial like '"+certificador+"%' ORDER BY fecha DESC LIMIT 200";
+                    string selectQuery = "SELECT * FROM vmonedas where  razonsocial like '%"+certificador+ "%' or  razonsocial like '"+certificador+ "%' ORDER BY idcertificado DESC LIMIT 200";
 
                     using (var selectCommand = new MySqlCommand(selectQuery, connection))
                     {
@@ -221,7 +221,7 @@ namespace Certificado2.Servicios
                 {
                     await connection.OpenAsync();
 
-                    string selectQuery = "SELECT * FROM vmonedas  razonsocial like '%" + certificador + "%' or  razonsocial like '" + certificador + "%' or moneda like '" +moneda+ "%' or moneda like '%" +moneda+ "%'   ORDER BY fecha DESC LIMIT 200";
+                    string selectQuery = "SELECT * FROM vmonedas  razonsocial like '%" + certificador + "%' or  razonsocial like '" + certificador + "%' or moneda like '" +moneda+ "%' or moneda like '%" +moneda+ "%'   ORDER BY idcertificado DESC LIMIT 200";
 
                     using (var selectCommand = new MySqlCommand(selectQuery, connection))
                     {
