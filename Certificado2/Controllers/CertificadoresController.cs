@@ -79,7 +79,7 @@ namespace Certificado2.Controllers
             var vendedores = await _repositorioVendedores.GetVendedoresForDropdownAsync();
 
             // Asignar la lista al ViewBag como SelectList
-            ViewBag.IDVendedor = new SelectList(vendedores, "IDVendedor", "Nombre");
+            ViewBag.Vendedores = vendedores;
             return View();
         }
 
@@ -87,6 +87,10 @@ namespace Certificado2.Controllers
         public async Task<IActionResult> Crear(Certificadores certificador)
         {
             string imagenBase64 = "";
+            var vendedores = await _repositorioVendedores.GetVendedoresForDropdownAsync();
+
+            // Asignar la lista al ViewBag como SelectList
+            ViewBag.Vendedores = vendedores;
             certificador.Suspendido = false;
             try
             {
@@ -129,7 +133,7 @@ namespace Certificado2.Controllers
             var vendedores = await _repositorioVendedores.GetVendedoresForDropdownAsync();
 
             // Asignar la lista al ViewBag como SelectList
-            ViewBag.IDVendedor = new SelectList(vendedores, "IDVendedor", "Nombre", certificador.IDVendedor);
+            ViewBag.Vendedores = vendedores;
 
             return View(certificador);
         }
@@ -141,7 +145,7 @@ namespace Certificado2.Controllers
             var vendedores = await _repositorioVendedores.GetVendedoresForDropdownAsync();
 
             // Asignar la lista al ViewBag como SelectList
-            ViewBag.IDVendedor = new SelectList(vendedores, "IDVendedor", "Nombre", certificador.IDVendedor);
+            ViewBag.Vendedores = vendedores;
             try
             {
                 if (certificador.Logo1 != null)
@@ -176,8 +180,44 @@ namespace Certificado2.Controllers
                     await _repositorioCertificadores.ModificarCLogoAsync(certificador);
                 }
 
-                
-              
+                var usuarios = await _repositorioCertificadores.ObtenerListadoUsuarios(certificador.Id, "");
+
+                foreach (UsuarioCertificados usuario in usuarios)
+                {
+                    string valor = "NO";
+                    if (certificador.joyeria)
+                    {
+                        valor = "SI";
+                    }
+                    else
+                    {
+                        valor = "NO";
+                    }
+                    await _repositorioCertificadores.UpdateClaimForUserAsync(usuario.Id, "JOYERIA", valor);
+                    string valor1 = "NO";
+                    if (certificador.numismatica)
+                    {
+                        valor1 = "SI";
+                    }
+                    else
+                    {
+                        valor1 = "NO";
+                    }
+                    await _repositorioCertificadores.UpdateClaimForUserAsync(usuario.Id, "NUMISMATICA", valor1);
+                    if (certificador.artesania)
+                    {
+                        valor1 = "SI";
+                    }
+                    else
+                    {
+                        valor1 = "NO";
+                    }
+                    await _repositorioCertificadores.UpdateClaimForUserAsync(usuario.Id, "ARTESANIA", valor1);
+
+
+
+                }
+
             }
             catch (Exception ex)
             {
@@ -305,21 +345,19 @@ namespace Certificado2.Controllers
         [HttpPost]
         public async Task<ActionResult> ModificarUsuario(UsuarioCertificados model)
         {
-            if (!ModelState.IsValid)
-            {
-                // Si el modelo no es válido, volver a cargar el certificador y regresar a la vista con los errores de validación
+            Certificadores certificador = null;
+               // Si el modelo no es válido, volver a cargar el certificador y regresar a la vista con los errores de validación
                 try
                 {
-                    var Certificador = await _repositorioCertificadores.ObtenerDetalleAsync(model.idcertificador);
-                    ViewBag.Certificador = Certificador.RazonSocial;
+                    certificador = await _repositorioCertificadores.ObtenerDetalleAsync(model.idcertificador);
+                    ViewBag.Certificador = certificador.RazonSocial;
                 }
                 catch (Exception ex)
                 {
                     return StatusCode(500, $"Error al obtener el detalle del certificador: {ex.Message}");
                 }
 
-                return View(model);
-            }
+               
 
             try
             {
@@ -345,7 +383,44 @@ namespace Certificado2.Controllers
 
                 if (result)
                 {
-                    return RedirectToAction("DetalleUsuario", new { id = model.Id });
+
+                    // VAMOS ACTUALIZAR LOS CLAIMS
+                  
+                        string valor = "NO";
+                        if (certificador.joyeria)
+                        {
+                            valor = "SI";
+                        }
+                        else
+                        {
+                            valor = "NO";
+                        }
+                      await  _repositorioCertificadores.UpdateClaimForUserAsync(usuario.Id, "JOYERIA", valor);
+                        string valor1 = "NO";
+                        if (certificador.numismatica)
+                        {
+                            valor1 = "SI";
+                        }
+                        else
+                        {
+                            valor1 = "NO";
+                        }
+                    await _repositorioCertificadores.UpdateClaimForUserAsync(usuario.Id, "NUMISMATICA", valor1);
+                        if (certificador.artesania)
+                        {
+                            valor1 = "SI";
+                        }
+                        else
+                        {
+                            valor1 = "NO";
+                        }
+                    await _repositorioCertificadores.UpdateClaimForUserAsync(usuario.Id, "ARTESANIA", valor1);
+
+
+
+
+
+
                 }
                 else
                 {
@@ -368,7 +443,7 @@ namespace Certificado2.Controllers
                 return StatusCode(500, $"Error al obtener el detalle del certificador: {ex.Message}");
             }
 
-            return View(model);
+            return RedirectToAction("ListaUsuarios", new {Certificador=certificador.Id});
         }
 
     }

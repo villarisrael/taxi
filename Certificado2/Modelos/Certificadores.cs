@@ -18,10 +18,17 @@ namespace Certificado2.Modelos
         public IFormFile Logo1 { get; set; }
         public byte[] Logo { get; set; }
         public bool Suspendido { get; set; }
+        public bool joyeria { get; set; }
+
+        public bool artesania { get; set; }
+
+        public bool numismatica { get; set; }
 
         public int IDVendedor { get; set; }
 
         public virtual Vendedor Vendedor { get; set; }
+
+       
 
     }
 }

@@ -158,51 +158,84 @@
                          @if (!User.IsInRole("Admin"))
                             {
                                 <li class="nav-item">
-                                <a href="acercade" class="nav-link">Acerca de</a>
+                                <a href="~/acercade" class="nav-link">Acerca de</a>
                                 </li>
-                           
-                                <li class="nav-item">
-                                <a href="precios" class="nav-link dropdown-toggle">Precios</a>
-                            
-                                </li>
+                                @if (User.IsInRole("Certificador"))
+                                {
+                                    <li class="nav-item">
+                                        <a href="~/Precios/Index" class="nav-link dropdown-toggle">Comprar</a>
+
+                                    </li>
+                                }
+                                else
+                                {
+                                    <li class="nav-item">
+                                        <a href="~/Precios/Index" class="nav-link dropdown-toggle">Precios</a>
+
+                                    </li>
+                                }
+
 
                        
                                 <li class="nav-item">
                                     <a href="contact.html" class="nav-link">Contactanos</a>
                                 </li>
                             }
-                        @if (User.IsInRole("Certificador"))
-                        {
-                            <li class="nav-item">
-                                <a href="precios" class="nav-link dropdown-toggle">Comprar </a>
-
-                            </li>
-                        }
+                        
                        
                         @if (User.IsInRole("Certificador"))
                         {
                             <li class="nav-item">
                                 <a href="#" class="nav-link dropdown-toggle">Capturar Certificado <i class="bx bx-chevron-down"></i></a>
                                 <ul class="dropdown-menu">
-                                    <li class="nav-item">
-                                        <a asp-controller="Registro" asp-action="CrearCertificadoMonedas" class="nav-link dropdown-toggle">Numismatica/Billete </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a asp-controller="Registro" asp-action="CrearCertificadoJoyeria" class="nav-link dropdown-toggle">Joyeria </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a asp-controller="Registro" asp-action="Artesania" class="nav-link dropdown-toggle">Artesania </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a asp-controller="Registro" asp-action="IndexNumismaticaCertificador"
-                                           asp-route-Certificador="@IDCertificador"
-                                           class="nav-link dropdown-toggle">Certificados Numismatica</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a asp-controller="Registro" asp-action="IndexJoyeriaCertificador"
-                                           asp-route-Certificador="@IDCertificador"
-                                           class="nav-link dropdown-toggle">Certificados Joyeria</a>
-                                    </li>
+                                    @{
+                                        string tieneaccesonumismatica = User.Claims.FirstOrDefault(c => c.Type == "NUMISMATICA")?.Value.ToString();
+                                        if (tieneaccesonumismatica=="SI")
+                                        {
+                                            <li class="nav-item">
+                                                <a asp-controller="Registro" asp-action="CrearCertificadoMonedas" class="nav-link dropdown-toggle">Numismatica/Billete </a>
+                                            </li>
+                                        }
+
+                                        string tieneaccesojoyeria = User.Claims.FirstOrDefault(c => c.Type == "JOYERIA")?.Value.ToString();
+                                        if (tieneaccesojoyeria == "SI")
+                                        {
+
+                                            <li class="nav-item">
+                                                <a asp-controller="Registro" asp-action="CrearCertificadoJoyeria" class="nav-link dropdown-toggle">Joyeria </a>
+                                            </li>
+                                        }
+                                        string tieneaccesoartesania = User.Claims.FirstOrDefault(c => c.Type == "ARTESANIA")?.Value.ToString();
+                                        if (tieneaccesoartesania == "SI")
+                                        {
+                                            <li class="nav-item">
+                                                <a asp-controller="Registro" asp-action="Artesania" class="nav-link dropdown-toggle">Artesania </a>
+                                            </li>
+                                            
+                                        }
+                                        if (tieneaccesonumismatica == "SI")
+                                        {
+                                            <li class="nav-item">
+                                                <a asp-controller="Registro" asp-action="IndexNumismaticaCertificador"
+                                                   asp-route-Certificador="@IDCertificador"
+                                                   class="nav-link dropdown-toggle">Certificados Numismatica</a>
+                                            </li>
+                                        }
+                                        if (tieneaccesojoyeria == "SI")
+                                        {
+
+
+                                            <li class="nav-item">
+                                                <a asp-controller="Registro" asp-action="IndexJoyeriaCertificador"
+                                                   asp-route-Certificador="@IDCertificador"
+                                                   class="nav-link dropdown-toggle">Certificados Joyeria</a>
+                                            </li>
+                                        }
+
+                                    }
+                                 
+                                    
+                                   
                                 </ul>
                             </li>
                             <li class="nav-item">

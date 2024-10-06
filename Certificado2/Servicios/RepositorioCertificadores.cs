@@ -31,17 +31,31 @@ namespace Certificado2.Servicios
         Task<UsuarioCertificados> ObtenerDetalleUsuario(string id);
 
         Task<bool> ActualizarUsuario(UsuarioCertificados usuario);
-    }
+
+        Task<IdentityResult> AddClaimToUserAsync(string username, string claimType, string claimValue);
+        Task<IdentityResult> RemoveClaimFromUserAsync(string username, string claimType, string claimValue);  // Nuevo método para eliminar un claim
+        Task<IdentityResult> UpdateClaimForUserAsync(string username, string claimType, string newClaimValue);  // Nuevo método para modificar un claim
+    
+}
 
     public class RepositorioCertificadores: IRepositorioCertificadores
     {
         private readonly string connectionString;
+        private readonly UserManager<UsuarioCertificados> _userManager;
+        private readonly SignInManager<UsuarioCertificados> _signInManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public RepositorioCertificadores(IConfiguration configuration)
+
+        public RepositorioCertificadores(IConfiguration configuration, UserManager<UsuarioCertificados> userManager,
+                                 SignInManager<UsuarioCertificados> signInManager,
+                                 RoleManager<IdentityRole> roleManager)
         {
+            _userManager = userManager;
+            _signInManager = signInManager;
+            _roleManager = roleManager;
             connectionString = configuration.GetConnectionString("ConexionMySql");
         }
-
+        
         //Método ObtenerListado
         public async Task<IEnumerable<Certificadores>> ObtenerListado()
         {
@@ -73,7 +87,10 @@ namespace Certificado2.Servicios
                                     RFC = reader["RFC"] as string,
                                     Logo = reader["logo"] as byte[],
                                     Suspendido = (bool)reader["Suspendido"] ,
-                                    IDVendedor = (int)reader["IDVendedor"]
+                                    IDVendedor = (int)reader["IDVendedor"],
+                                    joyeria = (bool)reader["joyeria"],
+                                    numismatica = (bool)reader["numismatica"],
+                                    artesania = (bool)reader["artesania"]
                                 };
 
                                 listado.Add(certificador);
@@ -120,7 +137,10 @@ namespace Certificado2.Servicios
                                     RFC = reader["RFC"] as string,
                                     Logo = reader["logo"] as byte[],
                                     Suspendido = (bool)reader["Suspendido"],
-                                    IDVendedor = (int)reader["IDVendedor"]
+                                    IDVendedor = (int)reader["IDVendedor"],
+                                    joyeria = (bool)reader["joyeria"],
+                                    numismatica = (bool)reader["numismatica"],
+                                    artesania = (bool)reader["artesania"]
                                 };
 
                                 listado.Add(certificador);
@@ -162,6 +182,11 @@ namespace Certificado2.Servicios
                         insertCommand.Parameters.AddWithValue("@Logo", objCertificadores.Logo);
 
                         insertCommand.Parameters.AddWithValue("@IDVendedor", objCertificadores.IDVendedor);
+                        
+
+                        insertCommand.Parameters.AddWithValue("@joyeria", objCertificadores.joyeria);
+                        insertCommand.Parameters.AddWithValue("@numismatica", objCertificadores.numismatica);
+                        insertCommand.Parameters.AddWithValue("@artesania", objCertificadores.artesania);
 
                         await insertCommand.ExecuteNonQueryAsync();
                     }
@@ -182,7 +207,8 @@ namespace Certificado2.Servicios
                 {
                     await connection.OpenAsync();
 
-                    string updateQuery = "UPDATE certificadores SET `RazonSocial` = @RazonSocial, `NombreResponsable` = @NombreResponsable, `Email` = @Email, `CP` = @CP, `Telefono` = @Telefono, `Emailfacturacion` = @Emailfacturacion, `RFC` = @RFC,Suspendido=@Suspendido, IDVendedor= @IDVendedor WHERE `id` = @Id";
+                    string updateQuery = "UPDATE certificadores SET `RazonSocial` = @RazonSocial, `NombreResponsable` = @NombreResponsable, `Email` = @Email, `CP` = @CP, `Telefono` = @Telefono, `Emailfacturacion` = @Emailfacturacion," +
+                        " `RFC` = @RFC,Suspendido=@Suspendido, IDVendedor= @IDVendedor, joyeria=@joyeria, numismatica=@numismatica, artesania=@artesania WHERE `id` = @Id";
 
                     using (var updateCommand = new MySqlCommand(updateQuery, connection))
                     {
@@ -197,6 +223,10 @@ namespace Certificado2.Servicios
                         updateCommand.Parameters.AddWithValue("@IDVendedor", objCertificadores.IDVendedor);
                         //updateCommand.Parameters.AddWithValue("@Logo", objCertificadores.Logo);
                         updateCommand.Parameters.AddWithValue("@Id", objCertificadores.Id);
+
+                        updateCommand.Parameters.AddWithValue("@joyeria", objCertificadores.joyeria);
+                        updateCommand.Parameters.AddWithValue("@numismatica", objCertificadores.numismatica);
+                        updateCommand.Parameters.AddWithValue("@artesania", objCertificadores.artesania);
 
                         await updateCommand.ExecuteNonQueryAsync();
                     }
@@ -218,7 +248,9 @@ namespace Certificado2.Servicios
                 {
                     await connection.OpenAsync();
 
-                    string updateQuery = "UPDATE certificadores SET `RazonSocial` = @RazonSocial, `NombreResponsable` = @NombreResponsable, `Email` = @Email, `CP` = @CP, `Telefono` = @Telefono, `Emailfacturacion` = @Emailfacturacion, `RFC` = @RFC,Suspendido=@Suspendido, `logo` = @Logo, IDVendedor=@IDVendedor WHERE `id` = @Id";
+                    string updateQuery = "UPDATE certificadores SET `RazonSocial` = @RazonSocial, `NombreResponsable` = @NombreResponsable, `Email` = @Email, `CP` = @CP, `Telefono` = @Telefono, " +
+                        "`Emailfacturacion` = @Emailfacturacion, `RFC` = @RFC,Suspendido=@Suspendido, `logo` = @Logo, IDVendedor=@IDVendedor," +
+                        "joyeria=@joyeria, numismatica=@numismatica, artesania=@artesania  WHERE `id` = @Id";
 
                     using (var updateCommand = new MySqlCommand(updateQuery, connection))
                     {
@@ -234,7 +266,9 @@ namespace Certificado2.Servicios
                         updateCommand.Parameters.AddWithValue("@IDVendedor", objCertificadores.IDVendedor);
                         updateCommand.Parameters.AddWithValue("@Id", objCertificadores.Id);
 
-
+                        updateCommand.Parameters.AddWithValue("@joyeria", objCertificadores.joyeria);
+                        updateCommand.Parameters.AddWithValue("@numismatica", objCertificadores.numismatica);
+                        updateCommand.Parameters.AddWithValue("@artesania", objCertificadores.artesania);
                         await updateCommand.ExecuteNonQueryAsync();
                     }
                 }
@@ -358,7 +392,10 @@ namespace Certificado2.Servicios
                                     RFC = reader["RFC"] as string,
                                     Suspendido = (bool)reader["Suspendido"],
                                     Logo = reader["Logo"] as byte[],
-                                    IDVendedor = Convert.ToInt32(reader["IDVendedor"])
+                                    IDVendedor = Convert.ToInt32(reader["IDVendedor"]),
+                                     joyeria = (bool)reader["joyeria"],
+                                    numismatica = (bool)reader["numismatica"],
+                                    artesania = (bool)reader["artesania"]
                                 };
                             }
                         }
@@ -469,6 +506,8 @@ namespace Certificado2.Servicios
             catch (Exception ex) { return usuario; }
         }
 
+
+
         public async Task<bool> ActualizarUsuario(UsuarioCertificados usuario)
         {
             try
@@ -519,8 +558,92 @@ namespace Certificado2.Servicios
                 return false;
             }
         }
+        public async Task<IdentityResult> AddClaimToUserAsync(string username, string claimType, string claimValue)
+        {
+            var user = await _userManager.FindByNameAsync(username);
+            if (user == null)
+            {
+                return IdentityResult.Failed(new IdentityError
+                {
+                    Code = "UserNotFound",
+                    Description = $"El usuario '{username}' no fue encontrado."
+                });
+            }
 
+            var newClaim = new Claim(claimType, claimValue);
 
+            var claims = await _userManager.GetClaimsAsync(user);
+            if (claims.Any(c => c.Type == claimType && c.Value == claimValue))
+            {
+                return IdentityResult.Failed(new IdentityError
+                {
+                    Code = "ClaimExists",
+                    Description = $"El usuario ya tiene el claim '{claimType}' con valor '{claimValue}'."
+                });
+            }
+
+            return await _userManager.AddClaimAsync(user, newClaim);
+        }
+
+        // Método para eliminar un claim
+        public async Task<IdentityResult> RemoveClaimFromUserAsync(string username, string claimType, string claimValue)
+        {
+            var user = await _userManager.FindByNameAsync(username);
+            if (user == null)
+            {
+                return IdentityResult.Failed(new IdentityError
+                {
+                    Code = "UserNotFound",
+                    Description = $"El usuario '{username}' no fue encontrado."
+                });
+            }
+
+            var claimToRemove = new Claim(claimType, claimValue);
+
+            // Eliminar el claim
+            var result = await _userManager.RemoveClaimAsync(user, claimToRemove);
+            return result;
+        }
+
+        // Método para modificar un claim (eliminar el anterior y agregar uno nuevo)
+        public async Task<IdentityResult> UpdateClaimForUserAsync(string iduser, string claimType, string newClaimValue)
+        {
+            var user = await _userManager.FindByIdAsync(iduser);
+            if (user == null)
+            {
+                return IdentityResult.Failed(new IdentityError
+                {
+                    Code = "UserNotFound",
+                    Description = $"El usuario '{iduser}' no fue encontrado."
+                });
+            }
+
+            // Obtener los claims actuales del usuario
+            var claims = await _userManager.GetClaimsAsync(user);
+
+            // Buscar el claim que queremos modificar
+            var claimToUpdate = claims.FirstOrDefault(c => c.Type == claimType);
+            if (claimToUpdate == null)
+            {
+                return IdentityResult.Failed(new IdentityError
+                {
+                    Code = "ClaimNotFound",
+                    Description = $"El claim '{claimType}' no fue encontrado para el usuario."
+                });
+            }
+
+            // Eliminar el claim anterior
+            var removeResult = await _userManager.RemoveClaimAsync(user, claimToUpdate);
+            if (!removeResult.Succeeded)
+            {
+                return removeResult;
+            }
+
+            // Añadir el nuevo claim con el valor actualizado
+            var newClaim = new Claim(claimType, newClaimValue);
+            var addResult = await _userManager.AddClaimAsync(user, newClaim);
+            return addResult;
+        }
 
     }
 }

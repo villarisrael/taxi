@@ -1,0 +1,30 @@
+﻿
+@{
+    ViewData["Title"] = "CompraMensual300";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+
+@model Certificado2.Controllers.CheckoutViewModel
+<form action="Pagar" method="post">
+    <input name="Concepto" id="Concepto" type="hidden" value="@Model.Concepto" />
+    <input name="Costo" id="Costo" type="hidden" value="@Model.Costo" />
+    <input name="cuantos" id="cuantos" type="hidden" value="@Model.cuantos" />
+    <input name="plan" id="plan" type="hidden" value="@Model.plan" />
+    <div class="container mt-5" style="padding-top:40px; padding-bottom:20px">
+        <div class="card">
+            <div class="card-header">
+                <h3>Check Out</h3>
+            </div>
+            <div class="card-body">
+                <h4>@Model.Concepto</h4>
+                <p><strong>Costo:</strong> $@Model.Costo MXN</p>
+
+                <form asp-action="Pagar" method="post">
+                    <button type="submit" class="btn btn-primary btn-lg">Pagar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</form>
+

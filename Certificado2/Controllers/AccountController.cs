@@ -12,13 +12,14 @@ namespace Certificado2.Controllers
         private readonly SignInManager<UsuarioCertificados> _signInManager;
         private readonly UserManager<UsuarioCertificados> _userManager;
         private readonly IUsuarioRepository _userRepository;
+        private readonly IRepositorioCertificadores _repositorioCertificadores;
 
-
-        public AccountController(UserManager<UsuarioCertificados> userManager, SignInManager<UsuarioCertificados> signInManager, IUsuarioRepository userRepository)
+        public AccountController(UserManager<UsuarioCertificados> userManager, SignInManager<UsuarioCertificados> signInManager, IUsuarioRepository userRepository, IRepositorioCertificadores repositorioCertificadores)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _userRepository = userRepository;
+            _repositorioCertificadores = repositorioCertificadores;
         }
 
         public IActionResult Login()
@@ -152,6 +153,40 @@ namespace Certificado2.Controllers
                     idcertificador = model.idcertificador // Establece idcertificador desde el modelo de vista
                 };
 
+                Certificadores certificador = await _repositorioCertificadores.ObtenerDetalleAsync(model.idcertificador);
+                string tieneaccesojoyeria = "NO";
+                string tieneaccesoartesania = "NO";
+                string tieneaccesonumismatica = "NO";
+                if (certificador != null)
+                {
+                    if (certificador.joyeria)
+                    {
+                        tieneaccesojoyeria = "SI";
+                    }
+                    else
+                    {
+                        tieneaccesojoyeria = "NO";
+                    }
+                    if (certificador.artesania)
+                    {
+                        tieneaccesoartesania = "SI";
+                    }
+                    else
+                    {
+                        tieneaccesoartesania = "NO";
+                    }
+                    if (certificador.numismatica)
+                    {
+                        tieneaccesonumismatica = "SI";
+                    }
+                    else
+                    {
+                        tieneaccesonumismatica = "NO";
+                    }
+
+
+                }
+
                 // Intenta crear el usuario
                 var result = await _userManager.CreateAsync(user, model.Password);
 
@@ -160,6 +195,9 @@ namespace Certificado2.Controllers
                     // Redirige al usuario a la página de inicio o al inicio de sesión
 
                     var resultrole = await _userRepository.AddUserToRoleAsync(model.UserName, model.Password, "Certificador");
+                    var declaracionjoyeria = await _userRepository.AddClaimToUserAsync(model.UserName, "JOYERIA", tieneaccesojoyeria);
+                    var declaracionartesania = await _userRepository.AddClaimToUserAsync(model.UserName, "ARTESANIA", tieneaccesoartesania);
+                    var declaracionnumismatica = await _userRepository.AddClaimToUserAsync(model.UserName, "NUMISMATICA", tieneaccesonumismatica);
 
                     if (resultrole.Succeeded)
                     {

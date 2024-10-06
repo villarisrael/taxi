@@ -15,6 +15,7 @@ namespace Certificado2.Servicios
         Task<bool> ConsumirFoliosAsync(int certificadorId);
         Task<bool> CambiarPlanAsync(int certificadorId, string nuevoPlan);
 
+
         Task<bool> AnadirFoliosAsync(int certificadorId, int cantidad, string plan);
     }
     public class CertificadoresFoliosRepository : ICertificadoresFoliosRepository
@@ -137,8 +138,8 @@ namespace Certificado2.Servicios
                     {
                         // No existe un registro, se debe insertar uno nuevo
                         string insertQuery = @"
-                    INSERT INTO certificadores_folios (IDCertificador, Plan, FoliosConsumidos, Mes, Año) 
-                    VALUES (@certificadorId, @plan, @cantidad, @mes, @año)";
+                    INSERT INTO certificadores_folios (IDCertificador, Plan, FoliosConsumidos,FoliosDisponibles, Mes, Año) 
+                    VALUES (@certificadorId, @plan,0, @cantidad, @mes, @año)";
 
                         using (var insertCommand = new MySqlCommand(insertQuery, connection))
                         {
