@@ -15,22 +15,34 @@
     <h1 class="mb-4">Numismática</h1>
 
     <!-- Formulario de búsqueda y selección de página -->
-    <form method="get" action="@Url.Action("IndexJoyeriaCertificador")" class="mb-4">
-        <div class="form-row align-items-center">
+    
+        <form method="get" action="@Url.Action("IndexJoyeriaCertificador")" class="row g-2 align-items-center mb-4">
+            <!-- Elementos por página -->
             <div class="col-auto">
-                <label class="sr-only" for="pageSize">Elementos por página:</label>
-                <select id="pageSize" name="pageSize" class="form-control" onchange="this.form.submit()">
+                <label for="pageSize" class="visually-hidden">Elementos por página:</label>
+                <select id="pageSize" name="pageSize" class="form-select" onchange="this.form.submit()">
                     <option value="5" @(pageSize == 5 ? "selected" : "")>5</option>
                     <option value="10" @(pageSize == 10 ? "selected" : "")>10</option>
                     <option value="20" @(pageSize == 20 ? "selected" : "")>20</option>
                 </select>
             </div>
-            
+
+            <!-- Campo de búsqueda -->
             <div class="col-auto">
-                <button type="submit" class="btn btn-primary">Buscar <i class="fa fa-search" aria-hidden="true"></i></button>
+                <label for="searchstring" class="visually-hidden">Buscar:</label>
+                <input type="text" name="searchstring" id="searchstring" class="form-control" placeholder="Buscar" value="@ViewBag.searchstring" />
             </div>
-        </div>
-    </form>
+
+            <!-- Campo oculto para Certificador -->
+            <input type="hidden" name="Certificador" id="Certificador" value="@ViewBag.IDCertificador" />
+
+            <!-- Botón de búsqueda -->
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary">
+                    Buscar <i class="fa fa-search" aria-hidden="true"></i>
+                </button>
+            </div>
+        </form>
 
     <!-- Tabla de resultados -->
     <table class="table table-striped">

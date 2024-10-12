@@ -59,10 +59,10 @@
         public string CodificarArtesania(VArtesania datosartesania)
         {
             // Concatenar los atributos de la moneda
-            string atributosMoneda = $"{datosartesania.Fabricante}-{datosartesania.Descripción}-{datosartesania.Dimensiones}-{datosartesania.Peso}";
+            string atributosartesania = $"{datosartesania.Fabricante}-{datosartesania.Descripcion}-{datosartesania.Dimensiones}-{datosartesania.Peso}";
 
             // Agregar la palabra base
-            string cadenaAProcesar = atributosMoneda + "Villar01";
+            string cadenaAProcesar = atributosartesania + "Villar01";
 
             // Aplicar un algoritmo de codificación seguro (SHA256)
             using (SHA256 sha256 = SHA256.Create())

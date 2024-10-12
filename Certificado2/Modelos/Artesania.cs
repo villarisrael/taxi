@@ -23,7 +23,7 @@ namespace Certificado2.Modelos
         public int Folio { get; set; }
 
         [StringLength(250)] // Ajusta la longitud si es necesario
-        public string Descripción { get; set; }
+        public string Descripcion { get; set; }
 
         [StringLength(250)] // Ajusta la longitud si es necesario
         public string Materiales { get; set; }
@@ -40,14 +40,18 @@ namespace Certificado2.Modelos
         [StringLength(255)]
         public byte[] Imagen { get; set; }
 
-        [Required]
-        public DateTime FechaCreación { get; set; }
+      
+        public DateTime FechaCreacion { get; set; }
 
         [Required]
         public DateTime Fecha { get; set; }
 
         [StringLength(250)]
         public string Observacion { get; set; }
+
+        public string idusucer { get;set; }
+
+        
     }
 
   
@@ -67,7 +71,7 @@ namespace Certificado2.Modelos
             public int Folio { get; set; }
 
             [StringLength(250)]
-            public string Descripción { get; set; }
+            public string Descripcion { get; set; }
 
             [StringLength(250)]
             public string Materiales { get; set; }
@@ -84,7 +88,7 @@ namespace Certificado2.Modelos
             public byte[] Imagen { get; set; }
 
             [Required]
-            public DateTime FechaCreación { get; set; }
+            public DateTime FechaCreacion { get; set; }
 
             [Required]
             public DateTime Fecha { get; set; }

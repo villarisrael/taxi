@@ -13,7 +13,7 @@ namespace Certificado2.Servicios
         Task<byte[]> ObtenerLogotipoEmpresaAsync();
         Task<IEnumerable<VMoneda>> ObtenerListadoMoneda(string certificador);
 
-        Task<IEnumerable<VMoneda>> ObtenerListadoMoneda(string certificador, string moneda);
+        Task<IEnumerable<VMoneda>> ObtenerListadoMoneda(string certificador, string moneda, string ano);
 
         Task<int> CrearCertificado(Moneda moneda);
 
@@ -211,7 +211,7 @@ namespace Certificado2.Servicios
             return listado;
         }
 
-        public async Task<IEnumerable<VMoneda>> ObtenerListadoMoneda(string certificador, string moneda)
+        public async Task<IEnumerable<VMoneda>> ObtenerListadoMoneda(string certificador, string moneda, string ano)
         {
             var listado = new List<VMoneda>();
 
@@ -221,7 +221,7 @@ namespace Certificado2.Servicios
                 {
                     await connection.OpenAsync();
 
-                    string selectQuery = "SELECT * FROM vmonedas  razonsocial like '%" + certificador + "%' or  razonsocial like '" + certificador + "%' or moneda like '" +moneda+ "%' or moneda like '%" +moneda+ "%'   ORDER BY idcertificado DESC LIMIT 200";
+                    string selectQuery = "SELECT * FROM vmonedas where razonsocial like  '%"+ certificador + "%'  and Nombre like '%" +moneda+ "%'  and Ano like '%" +ano +"%'   ORDER BY idcertificado DESC LIMIT 200";
 
                     using (var selectCommand = new MySqlCommand(selectQuery, connection))
                     {

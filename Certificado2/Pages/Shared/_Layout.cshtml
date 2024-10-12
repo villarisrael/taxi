@@ -5,7 +5,7 @@
 
 @{
     var usuario = await UserManager.GetUserAsync(User); // Obtiene el usuario autenticado
-    var IDCertificador = usuario?.idcertificador;
+    
 }
 @*
 @if (IDCertificador != null)
@@ -45,7 +45,9 @@
         </div>
     </div>
 </div>
-
+@{
+    var IDCertificador = usuario?.idcertificador;
+}
 <!-- Header -->
 <div class="header-area">
     <div class="container">
@@ -209,7 +211,7 @@
                                         if (tieneaccesoartesania == "SI")
                                         {
                                             <li class="nav-item">
-                                                <a asp-controller="Registro" asp-action="Artesania" class="nav-link dropdown-toggle">Artesania </a>
+                                                <a asp-controller="Registro" asp-action="CrearCertificadoArtesania" class="nav-link dropdown-toggle">Artesania </a>
                                             </li>
                                             
                                         }
@@ -231,6 +233,16 @@
                                                    class="nav-link dropdown-toggle">Certificados Joyeria</a>
                                             </li>
                                         }
+                                        
+                                        if (tieneaccesoartesania == "SI")
+                                        {
+                                            <li class="nav-item">
+                                                <a asp-controller="Registro" asp-action="IndexArtesaniaCertificador"
+                                                   asp-route-Certificador="@IDCertificador"
+                                                   class="nav-link dropdown-toggle">Certificados Artesania</a>
+                                            </li>
+
+                                        }
 
                                     }
                                  
@@ -251,13 +263,13 @@
                                 <a href="#" class="nav-link dropdown-toggle">Capturar Certificado <i class="bx bx-chevron-down"></i></a>
                                 <ul class="dropdown-menu">
                                     <li class="nav-item">
-                                        <a asp-controller="Registro" asp-action="NumismaticaAdmin" class="nav-link dropdown-toggle">Monedas/Billete </a>
+                                        <a asp-controller="Registro" asp-action="CrearCertificadoMonedasAdmin" class="nav-link dropdown-toggle">Monedas/Billete </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a asp-controller="Registro" asp-action="JoyeriaAdmin" class="nav-link dropdown-toggle">Joyeria </a>
+                                        <a asp-controller="Registro" asp-action="CrearCertificadoJoyeriaAdmin" class="nav-link dropdown-toggle">Joyeria </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a asp-controller="Registro" asp-action="ArtesaniaAdmin" class="nav-link dropdown-toggle">Artesania </a>
+                                        <a asp-controller="Registro" asp-action="CrearCertificadoArtesaniaAdmin" class="nav-link dropdown-toggle">Artesania </a>
                                     </li>
                                     <li class="nav-item">
                                         <a asp-controller="Registro" asp-action="IndexNumismatica" class="nav-link dropdown-toggle">Certificados Numismatica</a>

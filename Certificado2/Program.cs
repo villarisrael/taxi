@@ -20,6 +20,8 @@ builder.Services.AddTransient<IRepositorioJoyeria, RepositorioJoyeria>();
 builder.Services.AddTransient<IRepositorioVJoyeria, RepositorioVJoyeria>();
 builder.Services.AddTransient<IRepositorioVendedor, RepositorioVendedor>();
 builder.Services.AddTransient<IRepositorioArtesania, RepositorioArtesania>();
+builder.Services.AddTransient<IRepositorioVArtesania, RepositorioVArtesania>();
+
 builder.Services.AddTransient<IFoliosRepository, FoliosRepository>();
 builder.Services.AddTransient<ICertificadoresFoliosRepository, CertificadoresFoliosRepository>();
 builder.Services.AddTransient<IUsuarioRepository, UsuarioRepository>();

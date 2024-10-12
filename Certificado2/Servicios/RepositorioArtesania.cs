@@ -16,10 +16,12 @@ namespace Certificado2.Servicios
     public interface IRepositorioArtesania
     {
         // Crear
-        Task AddArtesaniaAsync(Artesania artesania);
 
-        // Leer (Obtener todos)
-        Task<IEnumerable<Artesania>> GetAllArtesaniasAsync();
+
+        Task<int> CrearCertificado(Artesania artesania);
+        
+            // Leer (Obtener todos)
+            Task<IEnumerable<Artesania>> GetAllArtesaniasAsync();
 
         // Leer (Obtener por ID)
         Task<Artesania> GetArtesaniaByIdAsync(int id);
@@ -43,38 +45,43 @@ public class RepositorioArtesania : IRepositorioArtesania
             connectionString = configuration.GetConnectionString("ConexionMySql");
         }
 
-        public async Task AddArtesaniaAsync(Artesania artesania)
+        public async Task<int> CrearCertificado(Artesania artesania)
         {
             try
             {
-                using (var connection = new MySqlConnection(connectionString))
+                using (MySqlConnection connection = new MySqlConnection(connectionString))
                 {
                     await connection.OpenAsync();
-                    string insertQuery = "INSERT INTO artesania (Fabricante, Serie, Folio, Descripción, Materiales, Dimensiones, Peso, IDCertificador, Imagen, FechaCreación, Fecha, Observacion) " +
-                                         "VALUES (@Fabricante, @Serie, @Folio, @Descripción, @Materiales, @Dimensiones, @Peso, @IDCertificador, @Imagen, @FechaCreación, @Fecha, @Observacion)";
 
-                    using (var command = new MySqlCommand(insertQuery, connection))
+                   
+                    string insertQuery = "INSERT INTO artesania (Fabricante, Serie, Folio, Descripcion, Materiales, Dimensiones, Peso, IDCertificador, Imagen, FechaCreacion, Fecha, Observacion, idusucer) " +
+                                         "VALUES (@Fabricante, @Serie, @Folio, @Descripcion, @Materiales, @Dimensiones, @Peso, @IDCertificador, @Imagen, @FechaCreación, @Fecha, @Observacion, @idususer)";
+
+                    
+                        using (var command = new MySqlCommand(insertQuery, connection))
                     {
                         command.Parameters.AddWithValue("@Fabricante", artesania.Fabricante);
                         command.Parameters.AddWithValue("@Serie", artesania.Serie);
                         command.Parameters.AddWithValue("@Folio", artesania.Folio);
-                        command.Parameters.AddWithValue("@Descripción", artesania.Descripción);
+                        command.Parameters.AddWithValue("@Descripcion", artesania.Descripcion);
                         command.Parameters.AddWithValue("@Materiales", artesania.Materiales);
                         command.Parameters.AddWithValue("@Dimensiones", artesania.Dimensiones);
                         command.Parameters.AddWithValue("@Peso", artesania.Peso);
                         command.Parameters.AddWithValue("@IDCertificador", artesania.IDCertificador);
                         command.Parameters.AddWithValue("@Imagen", artesania.Imagen);
-                        command.Parameters.AddWithValue("@FechaCreación", artesania.FechaCreación);
+                        command.Parameters.AddWithValue("@FechaCreación", artesania.FechaCreacion);
                         command.Parameters.AddWithValue("@Fecha", artesania.Fecha);
                         command.Parameters.AddWithValue("@Observacion", artesania.Observacion);
-
-                        await command.ExecuteNonQueryAsync();
+                        command.Parameters.AddWithValue("@idusucer", artesania.idusucer);
+                        int newId = Convert.ToInt32(await command.ExecuteScalarAsync());
+                        return newId;
                     }
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error al agregar la artesanía: {ex.Message}");
+                return -1;
             }
         }
 
@@ -101,13 +108,13 @@ public class RepositorioArtesania : IRepositorioArtesania
                                     Fabricante = reader["Fabricante"] as string,
                                     Serie = reader["Serie"] as string,
                                     Folio = (int)reader["Folio"],
-                                    Descripción = reader["Descripción"] as string,
+                                    Descripcion = reader["Descripcion"] as string,
                                     Materiales = reader["Materiales"] as string,
                                     Dimensiones = reader["Dimensiones"] as string,
                                     Peso = reader["Peso"] as string,
                                     IDCertificador = (int)reader["IDCertificador"],
                                     Imagen = reader["Imagen"] as byte[],
-                                    FechaCreación = (DateTime)reader["FechaCreación"],
+                                    FechaCreacion = (DateTime)reader["FechaCreacion"],
                                     Fecha = (DateTime)reader["Fecha"],
                                     Observacion = reader["Observacion"] as string
                                 };
@@ -151,13 +158,13 @@ public class RepositorioArtesania : IRepositorioArtesania
                                     Fabricante = reader["Fabricante"] as string,
                                     Serie = reader["Serie"] as string,
                                     Folio = (int)reader["Folio"],
-                                    Descripción = reader["Descripción"] as string,
+                                    Descripcion = reader["Descripcion"] as string,
                                     Materiales = reader["Materiales"] as string,
                                     Dimensiones = reader["Dimensiones"] as string,
                                     Peso = reader["Peso"] as string,
                                     IDCertificador = (int)reader["IDCertificador"],
                                     Imagen = reader["Imagen"] as byte[],
-                                    FechaCreación = (DateTime)reader["FechaCreación"],
+                                    FechaCreacion = (DateTime)reader["FechaCreacion"],
                                     Fecha = (DateTime)reader["Fecha"],
                                     Observacion = reader["Observacion"] as string
                                 };
@@ -181,7 +188,7 @@ public class RepositorioArtesania : IRepositorioArtesania
                 using (var connection = new MySqlConnection(connectionString))
                 {
                     await connection.OpenAsync();
-                    string updateQuery = "UPDATE artesania SET Fabricante = @Fabricante, Serie = @Serie, Folio = @Folio, Descripción = @Descripción, Materiales = @Materiales, Dimensiones = @Dimensiones, Peso = @Peso, IDCertificador = @IDCertificador, Imagen = @Imagen, FechaCreación = @FechaCreación, Fecha = @Fecha, Observacion = @Observacion WHERE IDArtesania = @IDArtesania";
+                    string updateQuery = "UPDATE artesania SET Fabricante = @Fabricante, Serie = @Serie, Folio = @Folio, Descripcion = @Descripcion, Materiales = @Materiales, Dimensiones = @Dimensiones, Peso = @Peso, IDCertificador = @IDCertificador, Imagen = @Imagen, FechaCreación = @FechaCreación, Fecha = @Fecha, Observacion = @Observacion WHERE IDArtesania = @IDArtesania";
 
                     using (var command = new MySqlCommand(updateQuery, connection))
                     {
@@ -189,13 +196,13 @@ public class RepositorioArtesania : IRepositorioArtesania
                         command.Parameters.AddWithValue("@Fabricante", artesania.Fabricante);
                         command.Parameters.AddWithValue("@Serie", artesania.Serie);
                         command.Parameters.AddWithValue("@Folio", artesania.Folio);
-                        command.Parameters.AddWithValue("@Descripción", artesania.Descripción);
+                        command.Parameters.AddWithValue("@Descripcion", artesania.Descripcion);
                         command.Parameters.AddWithValue("@Materiales", artesania.Materiales);
                         command.Parameters.AddWithValue("@Dimensiones", artesania.Dimensiones);
                         command.Parameters.AddWithValue("@Peso", artesania.Peso);
                         command.Parameters.AddWithValue("@IDCertificador", artesania.IDCertificador);
                         command.Parameters.AddWithValue("@Imagen", artesania.Imagen);
-                        command.Parameters.AddWithValue("@FechaCreación", artesania.FechaCreación);
+                        command.Parameters.AddWithValue("@FechaCreación", artesania.FechaCreacion);
                         command.Parameters.AddWithValue("@Fecha", artesania.Fecha);
                         command.Parameters.AddWithValue("@Observacion", artesania.Observacion);
 
@@ -260,13 +267,13 @@ public class RepositorioArtesania : IRepositorioArtesania
                                     Fabricante = reader["Fabricante"] as string,
                                     Serie = reader["Serie"] as string,
                                     Folio = (int)reader["Folio"],
-                                    Descripción = reader["Descripción"] as string,
+                                    Descripcion = reader["Descripcion"] as string,
                                     Materiales = reader["Materiales"] as string,
                                     Dimensiones = reader["Dimensiones"] as string,
                                     Peso = reader["Peso"] as string,
                                     IDCertificador = (int)reader["IDCertificador"],
                                     Imagen = reader["Imagen"] as byte[],
-                                    FechaCreación = (DateTime)reader["FechaCreación"],
+                                    FechaCreacion = (DateTime)reader["FechaCreacion"],
                                     Fecha = (DateTime)reader["Fecha"],
                                     Observacion = reader["Observacion"] as string,
                                     RazonSocial = reader["RazonSocial"] as string

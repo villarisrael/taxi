@@ -1,0 +1,109 @@
+﻿@{
+    ViewData["Title"] = "IndexNumismatica";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+@model IEnumerable<Certificado2.Modelos.VJoyeria>
+
+@{
+    ViewData["Title"] = "Joyeria";
+    int currentPage = ViewBag.CurrentPage;
+    int totalPages = ViewBag.TotalPages;
+    int pageSize = ViewBag.PageSize;
+}
+
+<div style="padding-top:60px;padding-left:40px">
+    <h1>JOYERIA</h1>
+    <form method="get" action="@Url.Action("IndexJoyeria")" class="row g-2 align-items-center mb-4">
+        <!-- Elementos por página -->
+        <div class="col-auto">
+            <label for="pageSize" class="visually-hidden">Elementos por página:</label>
+            <select id="pageSize" name="pageSize" class="form-select" onchange="this.form.submit()">
+                <option value="5" @(pageSize == 5 ? "selected" : "")>5</option>
+                <option value="10" @(pageSize == 10 ? "selected" : "")>10</option>
+                <option value="20" @(pageSize == 20 ? "selected" : "")>20</option>
+            </select>
+        </div>
+
+        <div class="col-auto">
+            <label for="Certificador" class="visually-hidden">Certificador:</label>
+            <input type="text" name="Certificador" id="Certificador" class="form-control" placeholder="Certificador" value="@ViewBag.Certificador" />
+        </div>
+
+        <!-- Campo de búsqueda -->
+        <div class="col-auto">
+            <label for="Objeto" class="visually-hidden">Objeto:</label>
+            <input type="text" name="Objeto" id="Objeto" class="form-control" placeholder="Objeto" value="@ViewBag.Objeto" />
+        </div>
+
+       
+        <!-- Botón de búsqueda -->
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary">
+                Buscar <i class="fa fa-search" aria-hidden="true"></i>
+            </button>
+        </div>
+    </form>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Razon Social</th>
+
+                <th>Serie</th>
+                <th>Folio</th>
+                <th>Telefono</th>
+                <th>Objeto</th>
+                <th>Material</th>
+               
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.fecha.ToShortDateString()</td>
+                    <td>@item.RazonSocial</td>
+
+                    <td>@item.Serie</td>
+                    <td>@item.Folio</td>
+                    <td>@item.Telefono</td>
+                    <td>@item.Objeto</td>
+                    <td>@item.Material</td>
+                   
+                    <td>
+                        <a href="@Url.Action("CreatePdf","Joyeria")?Serie=@item.Serie&Folio=@item.Folio" class="btn btn-info">Ver</a>
+
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="pagination">
+        @if (currentPage > 1)
+        {
+            <a href="@Url.Action("IndexJoyeria", new { page = currentPage - 1, pageSize })">Anterior</a>
+        }
+
+        @for (int i = 1; i <= totalPages; i++)
+        {
+            if (i == currentPage)
+            {
+                <span>@i</span>
+            }
+            else
+            {
+                <a href="@Url.Action("IndexJoyeria", new { page = i, pageSize })">@i</a>
+            }
+        }
+
+        @if (currentPage < totalPages)
+        {
+            <a href="@Url.Action("IndexJoyeria", new { page = currentPage + 1, pageSize })">Siguiente</a>
+        }
+    </div>
+
+</div>
