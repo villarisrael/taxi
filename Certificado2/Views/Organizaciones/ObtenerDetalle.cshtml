@@ -1,0 +1,83 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model Certificado2.Modelos.Organizacion
+
+@{
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-5">
+    <div class="row">
+        <!-- Panel principal del certificador -->
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4>Detalles del Conductor</h4>
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-3">Razón Social:</dt>
+                        <dd class="col-sm-9">@Model.RazonSocial</dd>
+
+                        <dt class="col-sm-3">Nombre Responsable:</dt>
+                        <dd class="col-sm-9">@Model.NombreResponsable</dd>
+
+                        <dt class="col-sm-3">Email:</dt>
+                        <dd class="col-sm-9">@Model.Email</dd>
+
+                        <dt class="col-sm-3">Teléfono:</dt>
+                        <dd class="col-sm-9">@Model.Telefono</dd>
+
+                        <dt class="col-sm-3">Logo:</dt>
+                        <dd class="col-sm-9">
+                            @if (Model.Logo != null)
+                            {
+                                
+                                    string imagen = Convert.ToBase64String(Model.Logo);
+                                
+                                <img src="data:image/jpeg;base64,@imagen" alt="Logo" class="img-fluid" style="max-width: 200px;" />
+                            }
+                            else
+                            {
+                                <p>No disponible</p>
+                            }
+                        </dd>
+
+                        <dt class="col-sm-3">Suspendido:</dt>
+                        <dd class="col-sm-9">@((Model.Suspendido) ? "Sí" : "No")</dd>
+                    </dl>
+                </div>
+                <div class="card-footer text-end">
+                    <a href="@Url.Action("Modificar", new { id = Model.id })" class="btn btn-warning">Editar</a>
+                    <a href="@Url.Action("Index")" class="btn btn-secondary">Volver</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel del vendedor asociado -->
+        @if (ViewBag.Vendedor != null)
+        {
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        <h4>Vendedor Asociado</h4>
+                    </div>
+                    <div class="card-body">
+                        <dl class="row">
+                            <dt class="col-sm-4">Nombre:</dt>
+                            <dd class="col-sm-8">@ViewBag.Vendedor.Nombre</dd>
+
+                          
+                            <dt class="col-sm-4">Teléfono:</dt>
+                            <dd class="col-sm-8">@ViewBag.Vendedor.Telefono</dd>
+                        </dl>
+                    </div>
+                   
+                </div>
+            </div>
+        }
+    </div>
+</div>

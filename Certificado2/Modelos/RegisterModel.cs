@@ -28,7 +28,7 @@ namespace Certificado2.Modelos
             public string NombreCompleto { get; set; }
 
             [Display(Name = "ID Certificador")]
-            public int idcertificador { get; set; }
+            public int idOrganizacion { get; set; }
 
             public string PhoneNumber { get; set; }
         }

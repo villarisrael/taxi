@@ -10,16 +10,16 @@ namespace Certificado2.Controllers
 {
     public class CompraController : Controller
     {
-        private readonly IRepositorioCertificadores _repositorioCertificadores;
+        private readonly IRepositorioOrganizaciones _repositorioOrganizaciones;
         private readonly ICertificadoresFoliosRepository _repositorioFolios;
         private readonly SignInManager<UsuarioCertificados> _signInManager;
         private readonly UserManager<UsuarioCertificados> _userManager;
         private readonly IUsuarioRepository _userRepository;
        
 
-        public CompraController(IRepositorioCertificadores repositorioCertificadores, ICertificadoresFoliosRepository repositoriofolios, UserManager<UsuarioCertificados> userManager, SignInManager<UsuarioCertificados> signInManager, IUsuarioRepository userRepository, IFoliosRepository foliosRepository)
+        public CompraController(IRepositorioOrganizaciones repositorioCertificadores, ICertificadoresFoliosRepository repositoriofolios, UserManager<UsuarioCertificados> userManager, SignInManager<UsuarioCertificados> signInManager, IUsuarioRepository userRepository, IFoliosRepository foliosRepository)
         {
-            _repositorioCertificadores = repositorioCertificadores;
+            _repositorioOrganizaciones = repositorioCertificadores;
             _repositorioFolios = repositoriofolios;
             _userManager = userManager;
             _signInManager = signInManager;
@@ -103,7 +103,7 @@ namespace Certificado2.Controllers
 
             // Lógica para procesar el pago
             // Por ejemplo, integración con Conekta u otro servicio de pago
-            bool compra = await _repositorioFolios.AnadirFoliosAsync(usuario.idcertificador, pago.cuantos, pago.plan);
+            bool compra = await _repositorioFolios.AnadirFoliosAsync(usuario.idOrganizacion, pago.cuantos, pago.plan);
             TempData["Mensaje"] = "Pago realizado con éxito.";
             return RedirectToAction("Confirmacion", new {cuantos=pago.cuantos});
         }

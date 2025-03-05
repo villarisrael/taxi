@@ -14,13 +14,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
-builder.Services.AddTransient<IRepositorioCertificadores, RepositorioCertificadores>();
-builder.Services.AddTransient<IRepositorioMonedas, RepositorioMonedas>();
-builder.Services.AddTransient<IRepositorioJoyeria, RepositorioJoyeria>();
-builder.Services.AddTransient<IRepositorioVJoyeria, RepositorioVJoyeria>();
-builder.Services.AddTransient<IRepositorioVendedor, RepositorioVendedor>();
-builder.Services.AddTransient<IRepositorioArtesania, RepositorioArtesania>();
-builder.Services.AddTransient<IRepositorioVArtesania, RepositorioVArtesania>();
+builder.Services.AddTransient<IRepositorioOrganizaciones, RepositorioOrganizaciones>();
+
+
+builder.Services.AddTransient<IRepositorioConductor, RepositorioConductor>();
+
+
 
 builder.Services.AddTransient<IFoliosRepository, FoliosRepository>();
 builder.Services.AddTransient<ICertificadoresFoliosRepository, CertificadoresFoliosRepository>();

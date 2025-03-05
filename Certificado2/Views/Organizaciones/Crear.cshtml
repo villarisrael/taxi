@@ -1,0 +1,98 @@
+﻿@model Certificado2.Modelos.Organizacion
+
+@{
+    Layout = "_Layout";
+}
+
+<div class="container mt-5" style="padding-top:60px">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white text-center">
+                    <h4 class="mb-0">Registrar Nueva Organización</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" asp-action="Crear" id="MiFormulario" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label asp-for="RazonSocial" class="form-label">Razón Social</label>
+                            <input asp-for="RazonSocial" id="RazonSocial" name="RazonSocial" class="form-control" placeholder="Ingresar razón social" required />
+                            <span asp-validation-for="RazonSocial" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="NombreResponsable" class="form-label">Responsable</label>
+                            <input asp-for="NombreResponsable" id="NombreResponsable" name="NombreResponsable" class="form-control" placeholder="Ingresar nombre del responsable" required />
+                            <span asp-validation-for="NombreResponsable" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label">E-mail</label>
+                            <input asp-for="Email" id="Email" name="Email" class="form-control" placeholder="Ingresar e-mail" type="email" required />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+
+                  
+                        <div class="mb-3">
+                            <label asp-for="UserName" class="form-label">UserName</label>
+                            <input asp-for="UserName" id="UserName" name="UserName" class="form-control" placeholder="Ingresar nombre de usuario" required />
+                            <span asp-validation-for="UserName" class="text-danger"></span>
+                        </div>
+
+                    
+                        <div class="mb-3">
+                            <label asp-for="Password" class="form-label">Contraseña</label>
+                            <input asp-for="Password" id="Password" name="Password" class="form-control" placeholder="Ingresar contraseña" type="password" required />
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="CP" class="form-label">Código Postal (CP)</label>
+                            <input asp-for="CP" id="CP" name="CP" class="form-control" placeholder="Ingresar CP" required />
+                            <span asp-validation-for="CP" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Telefono" class="form-label">Teléfono</label>
+                            <input asp-for="Telefono" id="Telefono" name="Telefono" maxlength="10" class="form-control" placeholder="Ingresar teléfono" required />
+                            <span asp-validation-for="Telefono" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="RFC" class="form-label">RFC</label>
+                            <input asp-for="RFC" id="RFC" name="RFC" maxlength="13" class="form-control" placeholder="Ingresar RFC" required />
+                            <span asp-validation-for="RFC" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Logo1" class="form-label">Logo</label>
+                            <input asp-for="Logo" id="Logo" name="Logo" type="file" class="form-control" />
+                            <span asp-validation-for="Logo1" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-flex justify-content-end">
+                            <button type="submit" class="btn btn-primary me-2">
+                                <i class="fa fa-save me-1"></i> Registrar
+                            </button>
+                            <a href="@Url.Action("Index")" class="btn btn-secondary">
+                                <i class="fa fa-arrow-left me-1"></i> Volver
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById("MiFormulario").onsubmit = function (event) {
+        var requiredFields = document.querySelectorAll("[required]");
+        for (var field of requiredFields) {
+            if (!field.value.trim()) {
+                alert("Por favor, completa todos los campos obligatorios.");
+                event.preventDefault();
+                return;
+            }
+        }
+    };
+</script>

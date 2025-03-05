@@ -1,0 +1,106 @@
+﻿@model Certificado2.Modelos.Conductor
+
+@{
+    Layout = "_Layout";
+}
+
+<div class="container mt-5" style="padding-top:60px">
+    <div class="card">
+        <div class="card-header">
+            <h2>Crear Nuevo Conductor</h2>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                <div class="form-group">
+                    <label for="Nombre">Nombre</label>
+                    <input type="text" class="form-control" id="Nombre" name="Nombre" value="@Model.Nombre" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="Telefono">Teléfono</label>
+                    <input type="text" class="form-control" id="Telefono" name="Telefono" value="@Model.Telefono" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="Direccion">Dirección</label>
+                    <input type="text" class="form-control" id="Direccion" name="Direccion" value="@Model.Direccion" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="Colonia">Colonia</label>
+                    <input type="text" class="form-control" id="Colonia" name="Colonia" value="@Model.Colonia" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="Ciudad">Ciudad</label>
+                    <input type="text" class="form-control" id="Ciudad" name="Ciudad" value="@Model.Ciudad" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="Licencia">Licencia</label>
+                    <input type="text" class="form-control" id="Licencia" name="Licencia" value="@Model.Licencia" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="Placa">Placa</label>
+                    <input type="text" class="form-control" id="Placa" name="Placa" value="@Model.Placa" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="INE">INE</label>
+                    <input type="text" class="form-control" id="INE" name="INE" value="@Model.INE" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="Activo">Estado de Conductor</label>
+                    <select class="form-control" id="Activo" name="Activo">
+                        <option value="1" @(Model.Activo == 1 ? "selected" : "")>Activo</option>
+                        <option value="0" @(Model.Activo == 0 ? "selected" : "")>Inactivo</option>
+                    </select>
+                </div>
+
+                <input type="hidden" name="IDOrganizacion" value="@ViewBag.IDOrganizacion" />
+
+                <div class="form-group">
+                    <label for="Independiente">Independiente</label>
+                    <select class="form-control" id="Independiente" name="Independiente">
+                        <option value="Sí" @(Model.Independiente == "Sí" ? "selected" : "")>Sí</option>
+                        <option value="No" @(Model.Independiente == "No" ? "selected" : "")>No</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="Email">Correo Electrónico</label>
+                    <input type="email" class="form-control" id="Email" name="mail" value="@Model.mail" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="IDEstado">Estado</label>
+                    <input type="text" class="form-control" id="Estado" name="IDEstado" value="@Model.IDEstado" placeholder="Escribe el estado" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="IDPais">País</label>
+                    <input type="text" class="form-control" id="IDPais" name="IDPais" value="@Model.IDPais" placeholder="México" required />
+                </div>
+
+                <input type="hidden" name="Iduser" value="@ViewBag.UserId" />
+
+
+
+                <div class="form-group">
+                    <label for="Username">Nombre de Usuario</label>
+                    <input type="text" class="form-control" id="Username" name="username" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="Password">Contraseña</label>
+                    <input type="password" class="form-control" id="Password" name="password" required />
+                </div>
+
+                <button type="submit" class="btn btn-primary">Crear Conductor</button>
+                <a href="@Url.Action("Index")" class="btn btn-secondary w-50">Regresar</a>
+            </form>
+        </div>
+    </div>
+</div>

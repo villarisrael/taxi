@@ -12,14 +12,14 @@ namespace Certificado2.Controllers
         private readonly SignInManager<UsuarioCertificados> _signInManager;
         private readonly UserManager<UsuarioCertificados> _userManager;
         private readonly IUsuarioRepository _userRepository;
-        private readonly IRepositorioCertificadores _repositorioCertificadores;
+        private readonly IRepositorioOrganizaciones _repositorioOrganizaciones;
 
-        public AccountController(UserManager<UsuarioCertificados> userManager, SignInManager<UsuarioCertificados> signInManager, IUsuarioRepository userRepository, IRepositorioCertificadores repositorioCertificadores)
+        public AccountController(UserManager<UsuarioCertificados> userManager, SignInManager<UsuarioCertificados> signInManager, IUsuarioRepository userRepository, IRepositorioOrganizaciones repositorioCertificadores)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _userRepository = userRepository;
-            _repositorioCertificadores = repositorioCertificadores;
+            _repositorioOrganizaciones = repositorioCertificadores;
         }
 
         public IActionResult Login()
@@ -93,7 +93,7 @@ namespace Certificado2.Controllers
                     UserName = model.UserName,
                     Email = model.Email,
                     NombreCompleto = model.NombreCompleto,
-                    idcertificador = model.idcertificador, // Establece idcertificador desde el modelo de vista
+                    idOrganizacion = model.idOrganizacion, // Establece idcertificador desde el modelo de vista
                     PhoneNumber = model.PhoneNumber,
                     
                 };
@@ -150,42 +150,14 @@ namespace Certificado2.Controllers
                     UserName = model.UserName,
                     Email = model.Email,
                     NombreCompleto = model.NombreCompleto,
-                    idcertificador = model.idcertificador // Establece idcertificador desde el modelo de vista
+                    idOrganizacion = model.idOrganizacion // Establece idcertificador desde el modelo de vista
                 };
 
-                Certificadores certificador = await _repositorioCertificadores.ObtenerDetalleAsync(model.idcertificador);
+                Organizacion certificador = await _repositorioOrganizaciones.ObtenerDetalleAsync(model.idOrganizacion);
                 string tieneaccesojoyeria = "NO";
                 string tieneaccesoartesania = "NO";
                 string tieneaccesonumismatica = "NO";
-                if (certificador != null)
-                {
-                    if (certificador.joyeria)
-                    {
-                        tieneaccesojoyeria = "SI";
-                    }
-                    else
-                    {
-                        tieneaccesojoyeria = "NO";
-                    }
-                    if (certificador.artesania)
-                    {
-                        tieneaccesoartesania = "SI";
-                    }
-                    else
-                    {
-                        tieneaccesoartesania = "NO";
-                    }
-                    if (certificador.numismatica)
-                    {
-                        tieneaccesonumismatica = "SI";
-                    }
-                    else
-                    {
-                        tieneaccesonumismatica = "NO";
-                    }
-
-
-                }
+               
 
                 // Intenta crear el usuario
                 var result = await _userManager.CreateAsync(user, model.Password);

@@ -1,0 +1,114 @@
+﻿@model IEnumerable<Certificado2.Modelos.Organizacion>
+
+@{
+    Layout = "_Layout";
+}
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+
+<div class="container mt-5" style="padding-top:60px">
+    <div class="card shadow-lg">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h2 class="mb-0">Listado de Organizaciones</h2>
+            <a href="@Url.Action("Crear", "Organizaciones")" class="btn btn-light">
+                <i class="fa fa-plus me-2"></i> Nueva Organización
+            </a>
+        </div>
+        <div class="card-body">
+            <form action="~/Organizaciones/Index" method="get" class="d-flex mb-4">
+                <input type="text" class="form-control me-2" placeholder="Buscar organización" id="Organizacion" name="Organizacion" value="@ViewBag.Organizacion">
+                <button type="submit" class="btn btn-outline-primary">
+                    <i class="fa fa-search"></i>
+                </button>
+            </form>
+
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Razón Social</th>
+                            <th>Nombre Responsable</th>
+                            <th>Email</th>
+                            <th>Teléfono</th>
+                            <th>Logo</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var organizacion in Model)
+                        {
+                            <tr>
+                                <td>@organizacion.RazonSocial</td>
+                                <td>@organizacion.NombreResponsable</td>
+                                <td>@organizacion.Email</td>
+                                <td>@organizacion.Telefono</td>
+                                <td>
+                                    @if (organizacion.Logo != null)
+                                    {
+                                        string imagen = Convert.ToBase64String(organizacion.Logo);
+                                        <img src="data:image/jpeg;base64,@imagen" alt="Logo" width="80" class="img-thumbnail" />
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Sin logo</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a href="~/Organizaciones/ObtenerDetalle?id=@organizacion.id" class="btn btn-info btn-sm">
+                                            <i class="fa fa-info-circle"></i>
+                                        </a>
+                                        <a href="~/Organizaciones/Modificar?id=@organizacion.id" class="btn btn-warning btn-sm">
+                                            <i class="fa fa-edit"></i>
+                                        </a>
+                                        <a href="@Url.Action("IndexXOrganizacion", "Conductor", new { IDOrganzacion = organizacion.id })" class="btn btn-secondary btn-sm">
+                                            <i class="fa fa-users"></i> 
+                                        </a>
+                                       @*  <a href="@Url.Action("IndexXOrganizacionuser", "Conductor")" class="btn btn-primary mb-3">
+                                            <i class="fa fa-user"></i> 
+                                        </a> *@
+
+
+                                        <a href="~/Organizaciones/ConfirmarEliminar?id=@organizacion.id" class="btn btn-danger btn-sm">
+                                            <i class="fa fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (ViewBag.TotalPages > 1)
+{
+    <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+            @if (ViewBag.CurrentPage > 1)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="@Url.Action("Index", new { page = ViewBag.CurrentPage - 1 })">Anterior</a>
+                </li>
+            }
+            @for (int i = 1; i <= ViewBag.TotalPages; i++)
+            {
+                <li class="page-item @(ViewBag.CurrentPage == i ? "active" : "")">
+                    <a class="page-link" href="@Url.Action("Index", new { page = i })">@i</a>
+                </li>
+            }
+            @if (ViewBag.CurrentPage < ViewBag.TotalPages)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="@Url.Action("Index", new { page = ViewBag.CurrentPage + 1 })">Siguiente</a>
+                </li>
+            }
+        </ul>
+    </nav>
+}
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>

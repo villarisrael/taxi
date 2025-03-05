@@ -4,14 +4,14 @@
 @inject SignInManager<Certificado2.UsuarioCertificados> SignInManager
 
 @{
-    var usuario = await UserManager.GetUserAsync(User); // Obtiene el usuario autenticado
-    
+    UsuarioCertificados usuario = await UserManager.GetUserAsync(User); // Obtiene el usuario autenticado
+
 }
-@*
-@if (IDCertificador != null)
+
+@* @if (usuario.idOrganizacion != null)
 {
-    <p>ID Certificador: @IDCertificador</p>
-}*@
+    <p>ID Organizacion: @usuario.idOrganizacion @usuario.NombreCompleto</p>
+} *@
 
 <!DOCTYPE html>
 <html lang="en">
@@ -25,11 +25,11 @@
     <link rel="stylesheet" href="~/assets/css/owl.carousel.min.css" />
     <link rel="stylesheet" href="~/assets/css/owl.theme.default.min.css" />
     <link rel="stylesheet" href="~/assets/fonts/flaticon.css" />
-    
+
     <link rel="stylesheet" href="~/assets/css/style.css" />
     <link rel="stylesheet" href="~/assets/css/responsive.css" />
     <title>Certificado de Autenticidad y Calidad</title>
-    <link rel="icon" type="image/png" href="assets/4x/fullLogo.png" />
+    <link rel="icon" type="image/png" href="assets/4x/logocafe.jpeg" />
     <link href="~/css/vanessa/vanessa.css" rel="stylesheet" />
 </head>
 
@@ -46,7 +46,7 @@
     </div>
 </div>
 @{
-    var IDCertificador = usuario?.idcertificador;
+    var IDOrganizacion = usuario?.idOrganizacion;
 }
 <!-- Header -->
 <div class="header-area">
@@ -104,193 +104,106 @@
                     <div>
                         @{
                             string usuariosaludo = "Hola";
-                            if (User.IsInRole("Admin") || User.IsInRole("Certificador"))
-                            {  usuariosaludo = "Hola, " + usuario.NombreCompleto;
-                            
+                            if (User.IsInRole("Admin"))
+                            {
+                                usuariosaludo = "Hola, " + usuario.NombreCompleto;
+
+                            }
+                            if (User.IsInRole("Organizacion"))
+                            {
+                                usuariosaludo = "Bienvenido, " + usuario.NombreCompleto;
+
                             }
                         }
                         @usuariosaludo
                     </div>
                 </div>
             </div>
-         
+
         </div>
     </div>
 </div>
 
 <div class="navbar-area sticky-top">
-    
-        <a href="index.html" class="logo">
-            <img src="~/assets/img/FullLogo.jpg" alt="Logo" width="40px" height="20px" />
-        </a>
-    
+
+    <a href="index.html" class="logo">
+        <img src="~/assets/4x/logocafe.jpeg" alt="Logo" width="20px" height="20px" />
+    </a>
+
 
     <div class="main-nav">
         <div class="container">
             <nav class="navbar navbar-expand-md navbar-light">
                 <a class="navbar-brand" href="index.html">
-                    <img src="assets/4x/FullLogo1.jpg" width="100px" height="100px" alt="Logo" />
+                    <img src="~/assets/4x/Simovilidad.png" width="140px" height="100px" alt="Logo" />
                 </a>
                 <div class="collapse navbar-collapse mean-menu" id="navbarSupportedContent">
                     <ul class="navbar-nav">
                         <li class="nav-item">
-                            <a href="~/Index" class="nav-link dropdown-toggle active">Inicio </i></a>
+                            <a href="~/Index" class="nav-link dropdown-toggle active">Inicio </a>
 
                         </li>
                         <li class="nav-item">
-                            <a href="#" class="nav-link dropdown-toggle">Verificar Certificado <i class="bx bx-chevron-down"></i></a>
-                            <ul class="dropdown-menu">
-                                <li class="nav-item">
-                                    <a href="~/Monedas/BuscarCertificado" class="nav-link">Monedas</a>
+                            <a href="#" class="nav-link dropdown-toggle">localizacion </a>
 
-                                </li>
-                                <li class="nav-item">
-                                    <a href="~/Joyeria/BuscarCertificado" class="nav-link">Joyeria</a>
-
-                                </li>
-                                <li class="nav-item">
-                                    <a href="~/Artesania/BuscarCertificado" class="nav-link">Artesania</a>
-
-                                </li>
+                        </li>
 
 
-                            </ul>
-</li>
-                       
-                         @if (!User.IsInRole("Admin"))
-                            {
-                                <li class="nav-item">
-                                <a href="~/acercade" class="nav-link">Acerca de</a>
-                                </li>
-                                @if (User.IsInRole("Certificador"))
-                                {
-                                    <li class="nav-item">
-                                        <a href="~/Precios/Index" class="nav-link dropdown-toggle">Comprar</a>
-
-                                    </li>
-                                }
-                                else
-                                {
-                                    <li class="nav-item">
-                                        <a href="~/Precios/Index" class="nav-link dropdown-toggle">Precios</a>
-
-                                    </li>
-                                }
-
-
-                       
-                                <li class="nav-item">
-                                    <a href="contact.html" class="nav-link">Contactanos</a>
-                                </li>
-                            }
-                        
-                       
-                        @if (User.IsInRole("Certificador"))
+                        @if (User.IsInRole("Organizacion"))
                         {
                             <li class="nav-item">
-                                <a href="#" class="nav-link dropdown-toggle">Capturar Certificado <i class="bx bx-chevron-down"></i></a>
-                                <ul class="dropdown-menu">
-                                    @{
-                                        string tieneaccesonumismatica = User.Claims.FirstOrDefault(c => c.Type == "NUMISMATICA")?.Value.ToString();
-                                        if (tieneaccesonumismatica=="SI")
-                                        {
-                                            <li class="nav-item">
-                                                <a asp-controller="Registro" asp-action="CrearCertificadoMonedas" class="nav-link dropdown-toggle">Numismatica/Billete </a>
-                                            </li>
-                                        }
+                                <a href="~/Precios/Index" class="nav-link dropdown-toggle">Precios</a>
 
-                                        string tieneaccesojoyeria = User.Claims.FirstOrDefault(c => c.Type == "JOYERIA")?.Value.ToString();
-                                        if (tieneaccesojoyeria == "SI")
-                                        {
+                            </li>
 
-                                            <li class="nav-item">
-                                                <a asp-controller="Registro" asp-action="CrearCertificadoJoyeria" class="nav-link dropdown-toggle">Joyeria </a>
-                                            </li>
-                                        }
-                                        string tieneaccesoartesania = User.Claims.FirstOrDefault(c => c.Type == "ARTESANIA")?.Value.ToString();
-                                        if (tieneaccesoartesania == "SI")
-                                        {
-                                            <li class="nav-item">
-                                                <a asp-controller="Registro" asp-action="CrearCertificadoArtesania" class="nav-link dropdown-toggle">Artesania </a>
-                                            </li>
-                                            
-                                        }
-                                        if (tieneaccesonumismatica == "SI")
-                                        {
-                                            <li class="nav-item">
-                                                <a asp-controller="Registro" asp-action="IndexNumismaticaCertificador"
-                                                   asp-route-Certificador="@IDCertificador"
-                                                   class="nav-link dropdown-toggle">Certificados Numismatica</a>
-                                            </li>
-                                        }
-                                        if (tieneaccesojoyeria == "SI")
-                                        {
+                            <li class="nav-item">
+                                <a href="~/Conductor/IndexXOrganizacionuser" class="nav-link dropdown-toggle">Conductores</a>
 
-
-                                            <li class="nav-item">
-                                                <a asp-controller="Registro" asp-action="IndexJoyeriaCertificador"
-                                                   asp-route-Certificador="@IDCertificador"
-                                                   class="nav-link dropdown-toggle">Certificados Joyeria</a>
-                                            </li>
-                                        }
-                                        
-                                        if (tieneaccesoartesania == "SI")
-                                        {
-                                            <li class="nav-item">
-                                                <a asp-controller="Registro" asp-action="IndexArtesaniaCertificador"
-                                                   asp-route-Certificador="@IDCertificador"
-                                                   class="nav-link dropdown-toggle">Certificados Artesania</a>
-                                            </li>
-
-                                        }
-
-                                    }
-                                 
-                                    
-                                   
-                                </ul>
                             </li>
                             <li class="nav-item">
                                 <a asp-controller="Account" asp-action="Logout" class="nav-link dropdown-toggle">Salir</a>
                             </li>
                         }
+                        else
+                        {
+
+                        }
+
+
+
+
+
+
                         @if (User.IsInRole("Admin"))
                         {
                             <li class="nav-item">
-                                <a asp-controller="Certificadores" asp-action="Index" class="nav-link dropdown-toggle">Certificadores</a>
+                                <a asp-controller="Organizaciones" asp-action="Index" class="nav-link dropdown-toggle">Organizaciones de Taxis</a>
                             </li>
                             <li class="nav-item">
-                                <a href="#" class="nav-link dropdown-toggle">Capturar Certificado <i class="bx bx-chevron-down"></i></a>
+                                <a href="#" class="nav-link dropdown-toggle">Conductores  <i class="bx bx-chevron-down"></i></a>
                                 <ul class="dropdown-menu">
+
+
                                     <li class="nav-item">
-                                        <a asp-controller="Registro" asp-action="CrearCertificadoMonedasAdmin" class="nav-link dropdown-toggle">Monedas/Billete </a>
+                                        <a asp-controller="Conductor" asp-action="Index" class="nav-link">Conductores</a>
                                     </li>
-                                    <li class="nav-item">
-                                        <a asp-controller="Registro" asp-action="CrearCertificadoJoyeriaAdmin" class="nav-link dropdown-toggle">Joyeria </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a asp-controller="Registro" asp-action="CrearCertificadoArtesaniaAdmin" class="nav-link dropdown-toggle">Artesania </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a asp-controller="Registro" asp-action="IndexNumismatica" class="nav-link dropdown-toggle">Certificados Numismatica</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a asp-controller="Registro" asp-action="IndexJoyeria" class="nav-link dropdown-toggle">Certificados Joyeria</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a asp-controller="Registro" asp-action="IndexArtesania" class="nav-link dropdown-toggle">Certificados Artesania</a>
-                                    </li>
+
+
                                 </ul>
                             </li>
                             <li class="nav-item">
                                 <a asp-controller="Account" asp-action="Logout" class="nav-link dropdown-toggle">Salir</a>
                             </li>
                         }
-                        @if (!User.IsInRole("Admin") && !User.IsInRole("Certificador"))
+                        @if (!User.IsInRole("Admin") && !User.IsInRole("Organizacion") && !User.IsInRole("Conductor"))
                         {
                             <li class="nav-item">
                                 <a asp-controller="Account" asp-action="Login" class="nav-link dropdown-toggle">Ingresar</a>
                             </li>
+
+                            
+
+
                         }
                     </ul>
 
@@ -302,7 +215,7 @@
 
 
 <body>
-            @RenderBody()
+    @RenderBody()
 </body>
 </html>
 <!-- Footer -->
@@ -313,9 +226,9 @@
                 <div class="footer-item">
                     <div class="footer-logo">
                         <a class="footer-corel" href="index.html">
-                            <img src="~/assets/4x/lineal.png" alt="Logo" />
+                            <img src="~/assets/4x/SimovilidadLogotipoSiluetaBlanca.png" alt="Logo" />
                         </a>
-                        <p>Asegura la genuinidad de productos artesanales, Monedas y joyería mediante certificaciones verificables, brindando confianza tanto a creadores como a compradores.</p>
+                        <p>pruebaba.</p>
                         <ul>
                             <li>
                                 <a href="#" target="_blank">
