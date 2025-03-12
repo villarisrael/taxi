@@ -22,6 +22,8 @@ namespace Certificado2.Controllers
             _repositorioOrganizaciones = repositorioCertificadores;
         }
 
+
+
         public IActionResult Login()
 
         {
