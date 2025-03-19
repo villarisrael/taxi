@@ -9,7 +9,7 @@ namespace Certificado2.Servicios
 {
     public interface IRepositorioClientes
     {
-        Task<bool> CrearClienteAsync(string nombre, string username, string pass, int idOrganizacion = 0);
+        Task<bool> CrearClienteAsync(string nombre, string username, string telefono, string pass, int idOrganizacion = 0);
     }
 
     public class RepositorioClientes : IRepositorioClientes
@@ -23,7 +23,7 @@ namespace Certificado2.Servicios
             _userManager = userManager;
         }
 
-        public async Task<bool> CrearClienteAsync(string nombre, string username, string pass, int idOrganizacion = 0)
+        public async Task<bool> CrearClienteAsync(string nombre, string username, string telefono, string pass, int idOrganizacion = 0)
         {
             try
             {
@@ -35,6 +35,7 @@ namespace Certificado2.Servicios
                     {
                         UserName = username,
                         NombreCompleto = nombre,
+                        //Telefono = telefono,
                         Email = username,
                         idOrganizacion = idOrganizacion
                     };
