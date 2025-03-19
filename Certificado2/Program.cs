@@ -18,6 +18,7 @@ builder.Services.AddTransient<IRepositorioOrganizaciones, RepositorioOrganizacio
 
 
 builder.Services.AddTransient<IRepositorioConductor, RepositorioConductor>();
+builder.Services.AddTransient<IRepositorioClientes, RepositorioClientes> ();
 
 
 
