@@ -17,4 +17,18 @@ namespace Certificado2.Modelos
     
     }
 
+    public class LoginRequest
+    {
+        public string UserName { get; set; }  // Puede ser Email o Usuario
+        public string Password { get; set; }
+    }
+
+    public class ConductorRequest
+    {
+        public string UserName { get; set; }  // Puede ser el correo o usuario
+        public string Password { get; set; }
+    }
+
+
+
 }

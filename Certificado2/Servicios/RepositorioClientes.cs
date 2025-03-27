@@ -9,38 +9,40 @@ namespace Certificado2.Servicios
 {
     public interface IRepositorioClientes
     {
-        Task<bool> CrearClienteAsync(string nombre, string username, string telefono, string pass, int idOrganizacion = 0);
+        Task<bool> CrearClienteAsync(string Nombre, string Apellido, string Email, string Telefono, string Password);
+        
     }
 
     public class RepositorioClientes : IRepositorioClientes
     {
         private readonly string connectionString;
         private readonly UserManager<UsuarioCertificados> _userManager;
-
+        
         public RepositorioClientes(IConfiguration configuration, UserManager<UsuarioCertificados> userManager)
         {
             connectionString = configuration.GetConnectionString("ConexionMySql");
             _userManager = userManager;
+            
         }
 
-        public async Task<bool> CrearClienteAsync(string nombre, string username, string telefono, string pass, int idOrganizacion = 0)
+        public async Task<bool> CrearClienteAsync(string Nombre, string Apellido, string Email, string Telefono, string Password)
         {
             try
             {
-                var user = await _userManager.FindByEmailAsync(username);
+                var user = await _userManager.FindByEmailAsync(Email);
 
                 if (user == null)
                 {
                     user = new UsuarioCertificados()
                     {
-                        UserName = username,
-                        NombreCompleto = nombre,
-                        //Telefono = telefono,
-                        Email = username,
-                        idOrganizacion = idOrganizacion
+                        UserName = Email,
+                        NombreCompleto = Nombre + " "+ Apellido,
+                        PhoneNumber = Telefono,
+                        Email = Email,
+                        idOrganizacion = 0
                     };
 
-                    var result = await _userManager.CreateAsync(user, pass);
+                    var result = await _userManager.CreateAsync(user, Password);
 
                     if (!result.Succeeded)
                     {
@@ -53,7 +55,7 @@ namespace Certificado2.Servicios
                     return false;
                 }
 
-                await _userManager.AddToRoleAsync(user, "Conductor");
+                await _userManager.AddToRoleAsync(user, "Cliente");
                 return true;
             }
             catch (Exception ex)
